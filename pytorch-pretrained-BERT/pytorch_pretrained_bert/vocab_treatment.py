@@ -110,9 +110,9 @@ def main(annotated_text_file : str, text_file : str, vocab_file: str, word_file:
 
     for i, document in enumerate(documents_liste):
         if i < len(documents_liste) * 0.99:
-            output_file = 'training/transcript_' + str(i) + '.txt'
+            output_file = 'transcript_' + str(i) + '.txt'
         else:
-            output_file = 'test/transcript_' + str(i) + '.txt'
+            output_file = 'transcript_' + str(i) + '.txt'
 
         new_file = open(output_file, mode="w+", encoding="utf-8")
         new_file.write(document)
