@@ -815,13 +815,15 @@ class BertForPreTraining(BertPreTrainedModel):
                     x = x.to(self.device)
 
                     _preds = torch.index_select(A[i],0,x)
-                    _masks = torch.index_select(masked_lm_labels.view(self.train_batch_size, -1)[i],0,x)
+
+                    _masks = torch.index_select(masked_lm_labels[i],0,x)
+
                 # _preds = torch.cat([torch.index_select(a, 0, i[i!=-1]).unsqueeze(0) for a, i in zip(A, mask_index)])
 
                     print('preds_max:', torch.max(_preds,1).values.tolist())
 
                 # print(torch.cat([torch.index_select(a, 2, i).unsqueeze(0) for a, i in zip(_preds, _masks)]))
-                    print('Pred target:', torch.index_select(_preds,1,_masks).view(-1).tolist())
+                    print('Pred target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
                     print('target:', self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist()))
                     print('maxpred:',  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()))
 

@@ -211,8 +211,8 @@ def main():
 
     args = parser.parse_args()
 
-    if args.tensorboard :
-        from modeling import BertForPreTraining
+    # if args.tensorboard :
+    #     from modeling import BertForPreTraining
 
 
     assert args.pregenerated_data.is_dir(), \
