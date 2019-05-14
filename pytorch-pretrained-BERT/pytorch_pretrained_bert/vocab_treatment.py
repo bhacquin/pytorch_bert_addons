@@ -8,17 +8,19 @@ import pandas as pd
 import spacy
 from pytorch_pretrained_bert import BertTokenizer
 from tqdm import tqdm
+import os
 
 
-def main(annotated_text_file = str, text_file = str, vocab_file: str, word_file: FileType, threshold: int, missing_tokens_file: str, output_file : str):
-    nlp = spacy.load('en_core_web_lg', disable=['tokenizer', 'tagger', 'ner', 'textcat'])
+def main(annotated_text_file : str, text_file : str, vocab_file: str, word_file: str, threshold: int, output_file : str):
+    # nlp = spacy.load('en_core_web_lg', disable=['tokenizer', 'tagger', 'ner', 'textcat'])
 
 ###### Find missing tokens
-    # subprocess.call("1_extract_vocab.sh", shell = True)
-    subprocess.check_call("1_extract_vocab.sh -i %s -o %s" % (annotated_text_file, missing_tokens_file),   shell=True)
+    # os.system('sh ./1_extract_vocab.sh')
+    # subprocess.call("./1_extract_vocab.sh", shell = True)
+    subprocess.check_call("./1_extract_vocab.sh -i %s -o %s" % (str(annotated_text_file), str(word_file)), shell = True)
     vocab_file = expanduser(vocab_file)
     tokenizer = BertTokenizer(vocab_file, do_lower_case=False)
-    f = open(missing_tokens_file, "w+")
+    f = open(word_file, "w+")
     print('count,original,splitted', file=f)  # file header
     for line in tqdm(word_file, 'words'):
         c_word = line.strip().split()
@@ -39,7 +41,7 @@ def main(annotated_text_file = str, text_file = str, vocab_file: str, word_file:
     count_unused = 0
     vocab = []
     count = 0
-    f = open(missing_tokens_file, "r")
+    f = open(word_file, "r")
     for x in f:
         ### the first line is a warning from bert
         #   if count > 0:
@@ -64,7 +66,7 @@ def main(annotated_text_file = str, text_file = str, vocab_file: str, word_file:
 
 
 
-    df = pd.read_csv(text_file, delimiter="\n\n", header=None)
+    df = pd.read_csv(text_file, delimiter="\n\n", header=None, engine='python')
     docs = df[0].apply(lambda x: x.replace('Operator', ""))
 
     #### LOAD THE ANNOTATED DATA
@@ -122,9 +124,11 @@ args.add_argument(
     type=str,
     default='./bert-base-uncased-vocab.txt',
 )
+
+
 args.add_argument(
     '--word_file',
-    type=FileType(mode='r', encoding='utf-8'),
+    type=str,
     default='allwords.txt',
 )
 args.add_argument(
@@ -135,7 +139,7 @@ args.add_argument(
 )
 
 args.add_argument(
-    '--ouput_file',
+    '--output_file',
     type=str,
     default='./vocab.txt',
 )
@@ -143,13 +147,13 @@ args.add_argument(
 args.add_argument(
     '--annotated_text_file',
     type=str,
-    default='./annotated_stuff.txt',
+    default='annotated_stuff.txt',
 )
 
 args.add_argument(
     '--text_file',
     type=str,
-    default='./transcripts_presentation.txt',
+    default='transcripts_presentation.txt',
 )
 
 main(**vars(args.parse_args()))
