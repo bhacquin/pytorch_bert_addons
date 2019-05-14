@@ -38,7 +38,7 @@ mkdir data
 mkdir test
 wget https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt
 $address = pytorch_pretrained_bert
-chmod +x $address/1_extract_vocab.sh
+chmod +x "$address/1_extract_vocab.sh"
 # bash 1_extract_vocab.sh annotated_stuff.txt
 echo "Vocabulary issues"
 # python 2_find_missing_tokens.py --vocab_file bert-base-uncased-vocab.txt > new_vocab.txt
