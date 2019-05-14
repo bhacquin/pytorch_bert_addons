@@ -67,7 +67,7 @@ rm -r training/
 rm -r test/
 echo 'generating data for train'
 # python $address/pregenerate_training_data.py --train_corpus "training_text.txt" --bert_model vocab.txt --do_lower_case --output_dir training/ --epochs_to_generate 2 --max_seq_len 512
-python $address/pregenerate_training_data.py --train_corpus "test_text.txt" --bert_model vocab.txt --do_lower_case --output_dir test/ --epochs_to_generate $epoch --max_seq_len 512 --learning_rate $learning_rate;;
+python $address/pregenerate_training_data.py --train_corpus "test_text.txt" --bert_model vocab.txt --do_lower_case --output_dir test/ --epochs_to_generate $epoch --max_seq_len 512 ;;
 (--) shift; break;;
 (-*) echo "$0: error - unrecognized option $1" 1>&2 exit1;;
 (*) break ;;
@@ -84,4 +84,4 @@ tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 
 
 echo 'finetuning starting'
-python $address/finetune_on_pregenerated.py --verbose --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --tensorboard  >> results.txt
+python $address/finetune_on_pregenerated.py --verbose --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard  >> results.txt
