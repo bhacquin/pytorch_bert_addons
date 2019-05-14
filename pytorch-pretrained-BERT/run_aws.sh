@@ -10,10 +10,12 @@ text_file="transcripts_presentation.txt"
 vocab_file="./bert-base-uncased-vocab.txt"
 word_file="allwords.txt"
 threshold="5"
+train_batch_size=2
 output_file="./vocab.txt"
+epoch=2
 echo "$output_file"
 
-if ! options=$(getopt -o a -l all,annotated_text:,text_file:,vocab_file:,word_file:,output_file,threshold: -- "$@")
+if ! options=$(getopt -o ab:e: -l all,annotated_text:,text_file:,vocab_file:,word_file:,output_file,threshold:,batch_size:,epoch: -- "$@")
 then
     # something went wrong, getopt will put out an error message for us
     exit 1
@@ -33,6 +35,8 @@ case $1 in
   --word_file)word_file="$2" ; shift;;
   --output_file)output_file="$2" ; shift;;
   --threshold)threshold="$2" ; shift;;
+  -b| --batch_size)train_batch_size="$2" ; shift;;
+  -e| --epoch)epoch="$2" ; shift;;
   -a| --all) pip install -r requirements.txt
 
 python -m spacy download en_core_web_lg
@@ -59,7 +63,7 @@ rm -r training/
 rm -r test/
 echo 'generating data for train'
 # python $address/pregenerate_training_data.py --train_corpus "training_text.txt" --bert_model vocab.txt --do_lower_case --output_dir training/ --epochs_to_generate 2 --max_seq_len 512
-python $address/pregenerate_training_data.py --train_corpus "test_text.txt" --bert_model vocab.txt --do_lower_case --output_dir test/ --epochs_to_generate 2 --max_seq_len 512;;
+python $address/pregenerate_training_data.py --train_corpus "test_text.txt" --bert_model vocab.txt --do_lower_case --output_dir test/ --epochs_to_generate $epoch --max_seq_len 512;;
 (--) shift; break;;
 (-*) echo "$0: error - unrecognized option $1" 1>&2 exit1;;
 (*) break ;;
@@ -76,4 +80,4 @@ tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 
 
 echo 'finetuning starting'
-python $address/finetune_on_pregenerated.py --verbose --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs 10 --train_batch_size 16 --tensorboard  >> results.txt 
+python $address/finetune_on_pregenerated.py --verbose --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --tensorboard  >> results.txt
