@@ -43,13 +43,15 @@ python -m spacy download en_core_web_lg
 mkdir data
 mkdir test
 wget https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt
-cp bert-base-uncased-vocab.txt data/
+
 address="pytorch_pretrained_bert"
 data="data"
+cp bert-base-uncased-vocab.txt $data/
 chmod +x "$address/1_extract_vocab.sh"
 
 echo "Vocabulary issues"
 bash $address/1_extract_vocab.sh -i $data/$annotated_text -o $data/$word_file
+pip install $address
 # python 2_find_missing_tokens.py --vocab_file bert-base-uncased-vocab.txt > new_vocab.txt
 # python python1_data.py
 # python 3_add_missing_tokens_to_vocab.py --vocab_file bert-base-uncased-vocab.txt --ouput_file full_vocab.txt --missing_tokens_file new_vocab.txt
