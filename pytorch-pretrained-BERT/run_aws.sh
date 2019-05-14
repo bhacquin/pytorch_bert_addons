@@ -53,12 +53,12 @@ bash $address/1_extract_vocab.sh -i $data/$annotated_text -o $data/$word_file
 # python python2_data.py
 python $address/vocab_treatment.py --vocab_file $data/$vocab_file --word_file $data/$word_file --threshold $threshold --output_file $output_file --annotated_text_file $data/$annotated_text --text_file $data/$text_file
 echo "Prepare text data"
-python $address/prepare_all_texts_for_bert.py --input_folder data/ --ouput_file training_text.txt
+# python $address/prepare_all_texts_for_bert.py --input_folder data/ --ouput_file training_text.txt
 python $address/prepare_all_texts_for_bert.py --input_folder test/ --ouput_file test_text.txt
 rm -r training/
 rm -r test/
 echo 'generating data for train'
-python $address/pregenerate_training_data.py --train_corpus "training_text.txt" --bert_model vocab.txt --do_lower_case --output_dir training/ --epochs_to_generate 2 --max_seq_len 512
+# python $address/pregenerate_training_data.py --train_corpus "training_text.txt" --bert_model vocab.txt --do_lower_case --output_dir training/ --epochs_to_generate 2 --max_seq_len 512
 python $address/pregenerate_training_data.py --train_corpus "test_text.txt" --bert_model vocab.txt --do_lower_case --output_dir test/ --epochs_to_generate 2 --max_seq_len 512;;
 (--) shift; break;;
 (-*) echo "$0: error - unrecognized option $1" 1>&2 exit1;;
