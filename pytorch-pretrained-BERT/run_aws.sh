@@ -14,6 +14,8 @@ train_batch_size=2
 output_file="./vocab.txt"
 epoch=2
 learning_rate="3e-5"
+address="pytorch_pretrained_bert"
+data="data"
 echo "$output_file"
 
 if ! options=$(getopt -o ab:e: -l all,annotated_text:,text_file:,vocab_file:,word_file:,output_file,threshold:,batch_size:,epoch: -- "$@")
@@ -46,8 +48,7 @@ mkdir data
 mkdir test
 wget https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt
 
-address="pytorch_pretrained_bert"
-data="data"
+
 cp bert-base-uncased-vocab.txt $data/
 chmod +x "$address/1_extract_vocab.sh"
 
@@ -61,7 +62,7 @@ python setup.py install
 # python python2_data.py
 python $address/vocab_treatment.py --vocab_file $data/$vocab_file --word_file $data/$word_file --threshold $threshold --output_file $output_file --annotated_text_file $data/$annotated_text --text_file $data/$text_file
 echo "Prepare text data"
-python $address/prepare_all_texts_for_bert.py --input_folder data/ --ouput_file training_text.txt
+python $address/prepare_all_texts_for_bert.py --input_folder training/ --ouput_file training_text.txt
 python $address/prepare_all_texts_for_bert.py --input_folder test/ --ouput_file test_text.txt
 rm -r training/
 rm -r test/
@@ -80,7 +81,7 @@ done
 rm -r log
 mkdir log
 echo 'tensorboard setup'
-tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
+tensorboard --logdir=/log --host 0.0.0.0 --port 6006
 
 
 echo 'finetuning starting'
