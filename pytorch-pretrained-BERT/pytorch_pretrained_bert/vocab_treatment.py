@@ -17,7 +17,7 @@ def main(annotated_text_file : str, text_file : str, vocab_file: str, word_file:
 ###### Find missing tokens
     # os.system('sh ./1_extract_vocab.sh')
     # subprocess.call("./1_extract_vocab.sh", shell = True)
-    subprocess.check_call("./1_extract_vocab.sh -i %s -o %s" % (str(annotated_text_file), str(word_file)), shell = True)
+    # subprocess.check_call("./1_extract_vocab.sh -i %s -o %s" % (str(annotated_text_file), str(word_file)), shell = True)
     vocab_file = expanduser(vocab_file)
     tokenizer = BertTokenizer(vocab_file, do_lower_case=False)
     f = open(word_file, "w+")
