@@ -76,4 +76,4 @@ tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 
 
 echo 'finetuning starting'
-python $address/finetune_on_pregenerated.py --verbose --pregenerated_data training/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs 10 --train_batch_size 16 --tensorboard  >> results.txt &&
+python $address/finetune_on_pregenerated.py --verbose --pregenerated_data training/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs 10 --train_batch_size 16 --tensorboard  >> results.txt 
