@@ -60,6 +60,8 @@ python setup.py install
 # python 3_add_missing_tokens_to_vocab.py --vocab_file bert-base-uncased-vocab.txt --ouput_file full_vocab.txt --missing_tokens_file new_vocab.txt
 # mv full_vocab.txt vocab.txt
 # python python2_data.py
+mkdir -p $address/training
+mkdir -p $address/test
 python $address/vocab_treatment.py --vocab_file $data/$vocab_file --word_file $data/$word_file --threshold $threshold --output_file $output_file --annotated_text_file $data/$annotated_text --text_file $data/$text_file
 echo "Prepare text data"
 python $address/prepare_all_texts_for_bert.py --input_folder training/ --ouput_file training_text.txt
