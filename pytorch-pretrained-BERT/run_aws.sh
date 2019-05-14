@@ -26,18 +26,12 @@ set -- $options
 while [ $# -gt 0 ]
 do
 case $1 in
-  --annotated_text)annotated_text="$2"
-  ;shift;;
-  --text_file)text_file="$2"
-  ;shift;;
-  --vocab_file)vocab_file="$2"
-  ;shift;;
-  --word_file)word_file="$2"
-  ;shift;;
-  --output_file)output_file="$2"
-  ;shift;;
-  --threshold)threshold="$2"
-  ;shift;;
+  --annotated_text)annotated_text="$2" ; shift;;
+  --text_file)text_file="$2" ; shift;;
+  --vocab_file)vocab_file="$2" ; shift;;
+  --word_file)word_file="$2" ; shift;;
+  --output_file)output_file="$2" ; shift;;
+  --threshold)threshold="$2" ; shift;;
   (--) shift; break;;
   (-*) echo "$0: error - unrecognized option $1" 1>&2 exit1;;
   (*) break ;;
