@@ -39,6 +39,7 @@ python -m spacy download en_core_web_lg
 mkdir data
 mkdir test
 wget https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt
+cp bert-base-uncased-vocab.txt data/
 address="pytorch_pretrained_bert"
 data="data"
 chmod +x "$address/1_extract_vocab.sh"
