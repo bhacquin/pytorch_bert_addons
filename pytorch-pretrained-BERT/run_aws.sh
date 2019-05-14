@@ -43,7 +43,7 @@ address="pytorch_pretrained_bert"
 chmod +x "$address/1_extract_vocab.sh"
 
 echo "Vocabulary issues"
-bash "$address/1_extract_vocab.sh -i $annotated_text -o $word_file"
+bash $address/1_extract_vocab.sh -i $annotated_text -o $word_file
 # python 2_find_missing_tokens.py --vocab_file bert-base-uncased-vocab.txt > new_vocab.txt
 # python python1_data.py
 # python 3_add_missing_tokens_to_vocab.py --vocab_file bert-base-uncased-vocab.txt --ouput_file full_vocab.txt --missing_tokens_file new_vocab.txt
