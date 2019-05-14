@@ -53,7 +53,7 @@ chmod +x "$address/1_extract_vocab.sh"
 
 echo "Vocabulary issues"
 bash $address/1_extract_vocab.sh -i $data/$annotated_text -o $data/$word_file
-python setup.py install 
+python setup.py install
 # python 2_find_missing_tokens.py --vocab_file bert-base-uncased-vocab.txt > new_vocab.txt
 # python python1_data.py
 # python 3_add_missing_tokens_to_vocab.py --vocab_file bert-base-uncased-vocab.txt --ouput_file full_vocab.txt --missing_tokens_file new_vocab.txt
@@ -61,12 +61,12 @@ python setup.py install
 # python python2_data.py
 python $address/vocab_treatment.py --vocab_file $data/$vocab_file --word_file $data/$word_file --threshold $threshold --output_file $output_file --annotated_text_file $data/$annotated_text --text_file $data/$text_file
 echo "Prepare text data"
-# python $address/prepare_all_texts_for_bert.py --input_folder data/ --ouput_file training_text.txt
+python $address/prepare_all_texts_for_bert.py --input_folder data/ --ouput_file training_text.txt
 python $address/prepare_all_texts_for_bert.py --input_folder test/ --ouput_file test_text.txt
 rm -r training/
 rm -r test/
 echo 'generating data for train'
-# python $address/pregenerate_training_data.py --train_corpus "training_text.txt" --bert_model vocab.txt --do_lower_case --output_dir training/ --epochs_to_generate 2 --max_seq_len 512
+python $address/pregenerate_training_data.py --train_corpus "training_text.txt" --bert_model vocab.txt --do_lower_case --output_dir training/ --epochs_to_generate 2 --max_seq_len 512
 python $address/pregenerate_training_data.py --train_corpus "test_text.txt" --bert_model vocab.txt --do_lower_case --output_dir test/ --epochs_to_generate $epoch --max_seq_len 512 ;;
 (--) shift; break;;
 (-*) echo "$0: error - unrecognized option $1" 1>&2 exit1;;
@@ -84,4 +84,4 @@ tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 
 
 echo 'finetuning starting'
-python $address/finetune_on_pregenerated.py --verbose --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard  >> results.txt
+python $address/finetune_on_pregenerated.py --verbose --pregenerated_data training/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard  >> results.txt
