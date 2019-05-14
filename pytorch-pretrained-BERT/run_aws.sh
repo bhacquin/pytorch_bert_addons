@@ -5,11 +5,43 @@
 # virtualenv venv
 # source venv/bin/activate
 
-while getopts "a" option
+annotated_text=annotated_stuff.txt
+text_file=transcripts_presentation.txt
+vocab_file=./bert-base-uncased-vocab.txt
+word_file=allwords.txt
+threshold=5
+output_file=./vocab.txt
+
+if ! options=$(getopt -o a -l all,annotated_text:,text_file:,vocab_file:,word_file:,output_file,threshold: -- "$@")
+then
+    # something went wrong, getopt will put out an error message for us
+    exit 1
+fi
+set -- $options
+#
+# while getopts "a" option
+# do
+# case $option
+# in
+while [ $# -gt 0 ]
 do
-case $option
-in
-a)pip install -r requirements.txt
+case $1 in
+  --annotated_text)annotated_text="$2"
+  ;shift;;
+  --text_file)text_file="$2"
+  ;shift;;
+  --vocab_file)vocab_file="$2"
+  ;shift;;
+  --word_file)word_file="$2"
+  ;shift;;
+  --output_file)output_file="$2"
+  ;shift;;
+  --threshold)threshold="$2"
+  ;shift;;
+  (--) shift; break;;
+  (-*) echo "$0: error - unrecognized option $1" 1>&2 exit1;;
+  (*) break ;;
+  -a| --all)pip install -r requirements.txt
 python -m spacy download en_core_web_lg
 mkdir data
 mkdir test
@@ -38,6 +70,7 @@ python $address/pregenerate_training_data.py --train_corpus 'test_text.txt' --be
 ;;
 
 esac
+shift
 done
 
 
