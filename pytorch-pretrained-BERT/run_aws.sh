@@ -34,6 +34,7 @@ case $1 in
   --output_file)output_file="$2" ; shift;;
   --threshold)threshold="$2" ; shift;;
   -a| --all) pip install -r requirements.txt
+python setup.py
 python -m spacy download en_core_web_lg
 mkdir data
 mkdir test
