@@ -87,7 +87,8 @@ def truncate_seq_pair(tokens_a, tokens_b, max_num_tokens):
             break
 
         trunc_tokens = tokens_a if len(tokens_a) > len(tokens_b) else tokens_b
-        assert len(trunc_tokens) >= 1
+        if len(trunc_tokens)  1:
+            break
 
         # We want to sometimes truncate from the front and sometimes from the
         # back to add more randomness and avoid biases.
@@ -202,8 +203,9 @@ def create_instances_from_document(
                         tokens_b.extend(current_chunk[j])
                 truncate_seq_pair(tokens_a, tokens_b, max_num_tokens)
 
-                assert len(tokens_a) >= 1
-                assert len(tokens_b) >= 1
+                if len(tokens_a) < 1 or len(tokens_b) < 1:
+                    break
+
 
                 tokens = ["[CLS]"] + tokens_a + ["[SEP]"] + tokens_b + ["[SEP]"]
                 # The segment IDs are 0 for the [CLS] token, the A tokens and the first [SEP]
