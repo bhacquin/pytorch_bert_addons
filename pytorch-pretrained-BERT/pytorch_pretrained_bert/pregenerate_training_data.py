@@ -87,7 +87,7 @@ def truncate_seq_pair(tokens_a, tokens_b, max_num_tokens):
             break
 
         trunc_tokens = tokens_a if len(tokens_a) > len(tokens_b) else tokens_b
-        if len(trunc_tokens)  1:
+        if len(trunc_tokens) < 1:
             break
 
         # We want to sometimes truncate from the front and sometimes from the
