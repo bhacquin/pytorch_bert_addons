@@ -820,7 +820,7 @@ class BertForPreTraining(BertPreTrainedModel):
 
                 # _preds = torch.cat([torch.index_select(a, 0, i[i!=-1]).unsqueeze(0) for a, i in zip(A, mask_index)])
 
-                    print('preds_max:', torch.max(_preds,1).view(-1).tolist())
+                    print('preds_max:', torch.max(_preds,1)[0].view(-1).tolist())
 
                 # print(torch.cat([torch.index_select(a, 2, i).unsqueeze(0) for a, i in zip(_preds, _masks)]))
                     print('Pred target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
