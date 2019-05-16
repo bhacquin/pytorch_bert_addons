@@ -84,5 +84,5 @@ rm -r log
 mkdir log
 echo 'tensorboard setup'
 # tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
-echo 'finetuning starting' 
-python $address/finetune_on_pregenerated.py --verbose --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard  >> results.txt &
+echo 'finetuning starting'
+python $address/finetune_on_pregenerated.py --verbose --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard 
