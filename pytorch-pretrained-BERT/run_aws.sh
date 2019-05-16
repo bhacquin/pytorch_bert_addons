@@ -49,7 +49,7 @@ mkdir test
 wget https://s3.amazonaws.com/models.huggingface.co/bert/bert-base-uncased-vocab.txt
 
 
-cp bert-base-uncased-vocab.txt $data/ 
+cp bert-base-uncased-vocab.txt $data/
 chmod +x "$address/1_extract_vocab.sh"
 
 echo "Vocabulary issues"
@@ -83,7 +83,7 @@ done
 rm -r log
 mkdir log
 echo 'tensorboard setup'
-tensorboard --logdir=/log --host 0.0.0.0 --port 6006
+tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &&
 
 
 echo 'finetuning starting'
