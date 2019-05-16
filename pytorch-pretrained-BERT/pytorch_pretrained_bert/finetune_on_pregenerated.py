@@ -7,7 +7,7 @@ import random
 import numpy as np
 from collections import namedtuple
 from tempfile import TemporaryDirectory
-
+import pickle
 from torch.utils.data import DataLoader, Dataset, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
@@ -428,6 +428,7 @@ def main():
 
     # Save a trained model
     if args.save :
+        pickle.dump((model.df,open('results.p','w+')))
         logging.info("** ** * Saving fine-tuned model ** ** * ")
         model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
         output_model_file = args.output_dir / args.output_file

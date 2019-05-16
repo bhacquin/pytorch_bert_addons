@@ -790,9 +790,11 @@ class BertForPreTraining(BertPreTrainedModel):
         if tokeniser is not None:
             self.tokeniser = BertTokenizer(vocab_file=tokeniser)
             self.device = device
+
         else :
             self.tokeniser = tokeniser
         self.train_batch_size = train_batch_size
+        self.df = pd.DataFrame(columns=['preds_max','maxpred','Pred_target','target'])
 
     def forward(self, input_ids, token_type_ids=None, attention_mask=None, masked_lm_labels=None, next_sentence_label=None, mask_index = None):
         sequence_output, pooled_output = self.bert(input_ids, token_type_ids, attention_mask,
@@ -823,9 +825,13 @@ class BertForPreTraining(BertPreTrainedModel):
                     print('preds_max:', torch.max(_preds,1)[0].view(-1).tolist())
 
                 # print(torch.cat([torch.index_select(a, 2, i).unsqueeze(0) for a, i in zip(_preds, _masks)]))
-                    print('Pred target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
+                    print('Pred_target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
                     print('target:', self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist()))
                     print('maxpred:',  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()))
+                    dict = {'preds_max':torch.max(_preds,1)[0].view(-1).tolist(),'maxpred':  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()),\
+                            'Pred_target': torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist(),'target': self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist())}
+                    df_temporaire = pd.DataFrame(dict)
+                    self.df = pd.concat([self.df, df_temporaire])
 
         if masked_lm_labels is not None:
             loss_fct = CrossEntropyLoss(ignore_index=-1)
