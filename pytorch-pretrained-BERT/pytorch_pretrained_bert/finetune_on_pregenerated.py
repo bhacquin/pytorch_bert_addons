@@ -428,7 +428,7 @@ def main():
 
     # Save a trained model
     if args.save :
-        pickle.dump((model.df,open('results.p','w+')))
+        pickle.dump((model.df,open('results.p','wb')))
         logging.info("** ** * Saving fine-tuned model ** ** * ")
         model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
         output_model_file = args.output_dir / args.output_file
