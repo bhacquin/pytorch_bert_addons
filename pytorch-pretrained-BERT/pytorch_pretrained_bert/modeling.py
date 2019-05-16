@@ -820,7 +820,7 @@ class BertForPreTraining(BertPreTrainedModel):
 
                 # _preds = torch.cat([torch.index_select(a, 0, i[i!=-1]).unsqueeze(0) for a, i in zip(A, mask_index)])
                 #     print('pred_', _preds)
-                    print('preds_max:', torch.max(_preds,1))
+                    print('preds_max:', torch.max(_preds,1).view(-1).tolist())
 
                 # print(torch.cat([torch.index_select(a, 2, i).unsqueeze(0) for a, i in zip(_preds, _masks)]))
                     print('Pred target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
@@ -830,12 +830,15 @@ class BertForPreTraining(BertPreTrainedModel):
         if masked_lm_labels is not None:
             loss_fct = CrossEntropyLoss(ignore_index=-1)
             masked_lm_loss = loss_fct(prediction_scores.view(-1, self.config.vocab_size), masked_lm_labels.view(-1))
+            print('mask_loss', masked_lm_loss)
             writer.add_scalar('masked_lm_loss', masked_lm_loss.item(), self.bert.iteration)
             if next_sentence_label is not None:
                 next_sentence_loss = loss_fct(seq_relationship_score.view(-1, 2), next_sentence_label.view(-1))
+                print('mask_loss', next_sentence_loss)
                 writer.add_scalar('next_sentence_loss', next_sentence_loss.item(), self.bert.iteration)
                 total_loss = masked_lm_loss + next_sentence_loss
                 writer.add_scalar('total_loss', total_loss.item(), self.bert.iteration)
+                return total_loss
             else:
                 return masked_lm_loss
         else:
