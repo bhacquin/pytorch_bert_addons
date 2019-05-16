@@ -827,15 +827,17 @@ class BertForPreTraining(BertPreTrainedModel):
                     print('target:', self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist()))
                     print('maxpred:',  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()))
 
-        if masked_lm_labels is not None and next_sentence_label is not None:
+        if masked_lm_labels is not None:
             loss_fct = CrossEntropyLoss(ignore_index=-1)
             masked_lm_loss = loss_fct(prediction_scores.view(-1, self.config.vocab_size), masked_lm_labels.view(-1))
-            next_sentence_loss = loss_fct(seq_relationship_score.view(-1, 2), next_sentence_label.view(-1))
             writer.add_scalar('masked_lm_loss', masked_lm_loss.item(), self.bert.iteration)
-            writer.add_scalar('next_sentence_loss', next_sentence_loss.item(), self.bert.iteration)
-            total_loss = masked_lm_loss + next_sentence_loss
-            writer.add_scalar('total_loss', total_loss.item(), self.bert.iteration)
-            return total_loss
+            if next_sentence_label is not None:
+                next_sentence_loss = loss_fct(seq_relationship_score.view(-1, 2), next_sentence_label.view(-1))
+                writer.add_scalar('next_sentence_loss', next_sentence_loss.item(), self.bert.iteration)
+                total_loss = masked_lm_loss + next_sentence_loss
+                writer.add_scalar('total_loss', total_loss.item(), self.bert.iteration)
+            else:
+                return masked_lm_loss
         else:
             return prediction_scores, seq_relationship_score
 

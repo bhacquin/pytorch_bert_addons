@@ -138,6 +138,9 @@ def main():
     parser.add_argument("--bert_model", type=str, required=True, help="Bert pre-trained model selected in the list: bert-base-uncased, "
                              "bert-large-uncased, bert-base-cased, bert-base-multilingual, bert-base-chinese.")
 
+    parser.add_argument("--no_sentence_loss", action="store_true",
+                        help="Whether not to use sentence level loss.")
+
     parser.add_argument('--tokeniser', type=str, default="vocab.txt")
 
     parser.add_argument("--do_lower_case", action="store_true")
@@ -353,7 +356,8 @@ def main():
                     model.train()
                     batch = tuple(t.to(device) for t in batch)
                     input_ids, input_mask, segment_ids, lm_label_ids, is_next, mask_index = batch
-
+                    if args.no_sentence_loss:
+                        is_next = None
                     loss = model(input_ids, segment_ids, input_mask, lm_label_ids, is_next, mask_index)
                     if args.verbose:
                         # print('input_ids : ', input_ids)
