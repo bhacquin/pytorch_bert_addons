@@ -27,7 +27,7 @@ import tarfile
 import tempfile
 import sys
 from io import open
-
+import pandas as pd
 import torch
 from torch import nn
 from torch.nn import CrossEntropyLoss, NLLLoss, BCEWithLogitsLoss
