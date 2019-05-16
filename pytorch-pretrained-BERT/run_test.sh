@@ -12,7 +12,7 @@ word_file="allwords.txt"
 threshold="5"
 train_batch_size=2
 output_file="./vocab.txt"
-epoch=2
+epoch=1
 learning_rate="3e-5"
 address="pytorch_pretrained_bert"
 data="data"
@@ -85,4 +85,4 @@ mkdir log
 echo 'tensorboard setup'
 # tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 echo 'finetuning starting'
-python $address/finetune_on_pregenerated.py --verbose --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard 
+python $address/finetune_on_pregenerated.py  --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard

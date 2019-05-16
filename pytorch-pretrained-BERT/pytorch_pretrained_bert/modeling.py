@@ -801,37 +801,26 @@ class BertForPreTraining(BertPreTrainedModel):
                                                    output_all_encoded_layers=False)
         prediction_scores, seq_relationship_score = self.cls(sequence_output, pooled_output)
 
-        if self.verbose:
 
-            print('\n')
+        if mask_index is not None:
+            # mask_index = mask_index[mask_index != -1].view(self.train_batch_size,-1)
+            A = prediction_scores.view(self.train_batch_size,-1, self.config.vocab_size)
+            l = [torch.tensor(a)[torch.tensor(a)!=-1] for a in mask_index.tolist()]
 
-            if mask_index is not None:
-                # mask_index = mask_index[mask_index != -1].view(self.train_batch_size,-1)
-
-                A = prediction_scores.view(self.train_batch_size,-1, self.config.vocab_size)
-
-
-                l = [torch.tensor(a)[torch.tensor(a)!=-1] for a in mask_index.tolist()]
-
-                for i, x in enumerate(l):
-                    x = x.to(self.device)
-
-                    _preds = torch.index_select(A[i],0,x)
-
-                    _masks = torch.index_select(masked_lm_labels[i],0,x)
-
-                # _preds = torch.cat([torch.index_select(a, 0, i[i!=-1]).unsqueeze(0) for a, i in zip(A, mask_index)])
-                #     print('pred_', _preds)
+            for i, x in enumerate(l):
+                x = x.to(self.device)
+                _preds = torch.index_select(A[i],0,x)
+                _masks = torch.index_select(masked_lm_labels[i],0,x)
+                if self.verbose:
+                    print('\n')
                     print('preds_max:', torch.max(_preds,1)[0].view(-1).tolist())
-
-                # print(torch.cat([torch.index_select(a, 2, i).unsqueeze(0) for a, i in zip(_preds, _masks)]))
                     print('Pred_target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
                     print('target:', self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist()))
                     print('maxpred:',  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()))
-                    dict = {'preds_max':torch.max(_preds,1)[0].view(-1).tolist(),'maxpred':  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()),\
-                            'Pred_target': torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist(),'target': self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist())}
-                    df_temporaire = pd.DataFrame(dict)
-                    self.df = pd.concat([self.df, df_temporaire])
+                dict = {'preds_max':torch.max(_preds,1)[0].view(-1).tolist(),'maxpred':  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()),\
+                        'Pred_target': torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist(),'target': self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist())}
+                df_temporaire = pd.DataFrame(dict)
+                self.df = pd.concat([self.df, df_temporaire])
 
         if masked_lm_labels is not None:
             loss_fct = CrossEntropyLoss(ignore_index=-1)
