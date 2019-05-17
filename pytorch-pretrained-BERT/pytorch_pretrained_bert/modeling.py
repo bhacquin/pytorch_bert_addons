@@ -817,7 +817,11 @@ class BertForPreTraining(BertPreTrainedModel):
                     print('Pred_target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
                     print('target:', self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist()))
                     print('maxpred:',  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()))
-                dict = {'preds_max':torch.max(_preds,1)[0].view(-1).cpu().tolist(),'maxpred':  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).cpu().tolist()),'Pred_target': torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).cpu().tolist(),'target': self.tokeniser.convert_ids_to_tokens(_masks.view(-1).cpu().tolist())}
+                preds_max = torch.max(_preds,1)[0].view(-1).data.tolist()
+                maxpred = self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).data.tolist())
+                Pred_target = torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).cpu().tolist()
+                target = self.tokeniser.convert_ids_to_tokens(_masks.view(-1).cpu().tolist())
+                dict = {'preds_max': preds_max,'maxpred': maxpred ,'Pred_target': Pred_target,'target': target}
                 df_temporaire = pd.DataFrame(dict)
                 self.df = pd.concat([self.df, df_temporaire])
 
