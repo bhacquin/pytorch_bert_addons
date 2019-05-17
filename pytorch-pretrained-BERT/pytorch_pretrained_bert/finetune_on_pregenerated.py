@@ -358,6 +358,7 @@ def main():
                     input_ids, input_mask, segment_ids, lm_label_ids, is_next, mask_index = batch
                     if args.no_sentence_loss:
                         is_next = None
+                    print("GPU", n_gpu)
                     loss = model(input_ids, segment_ids, input_mask, lm_label_ids, is_next, mask_index)
                     if args.verbose:
                         # print('input_ids : ', input_ids)
