@@ -15,7 +15,7 @@ from tqdm import tqdm
 from pytorch_pretrained_bert.modeling import BertForPreTraining
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
-
+CUDA_LAUNCH_BLOCKING = 1
 InputFeatures = namedtuple("InputFeatures", "input_ids input_mask segment_ids lm_label_ids is_next masked_lm_positions")
 
 log_format = '%(asctime)-10s: %(message)s'

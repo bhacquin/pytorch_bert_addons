@@ -33,6 +33,7 @@ from torch import nn
 from torch.nn import CrossEntropyLoss, NLLLoss, BCEWithLogitsLoss
 from pytorch_pretrained_bert.file_utils import cached_path
 from pytorch_pretrained_bert.tokenization import BertTokenizer
+CUDA_LAUNCH_BLOCKING = 1
 
 writer = SummaryWriter('./log')
 logger = logging.getLogger(__name__)
