@@ -37,10 +37,10 @@ case $1 in
   --vocab_file)vocab_file="$2" ; shift;;
   --word_file)word_file="$2" ; shift;;
   --output_file)output_file="$2" ; shift;;
-  --threshold)threshold="$2" ; shift;;
-  -b| --batch_size)train_batch_size="$2" ; shift;;
-  -e| --epoch)epoch="$2" ; shift;;
-  -l| --learning_rate)learning_rate="$2" ; shift;;
+  --threshold)threshold=$2 ; shift;;
+  -b| --batch_size)train_batch_size=$2 ; shift;;
+  -e| --epoch)epoch=$2 ; shift;;
+  -l| --learning_rate)learning_rate=$2 ; shift;;
   -a| --all) pip install -r requirements.txt
 
 python -m spacy download en_core_web_lg
