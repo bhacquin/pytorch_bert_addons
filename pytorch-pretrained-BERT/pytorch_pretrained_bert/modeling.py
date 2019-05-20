@@ -832,16 +832,16 @@ class BertForPreTraining(BertPreTrainedModel):
                 # self.df = pd.concat([self.df, df_temporaire])
 
         if masked_lm_labels is not None:
-            print('Loos about to be computed')
+            # print('Loos about to be computed')
             loss_fct = CrossEntropyLoss(ignore_index=-1)
             masked_lm_loss = loss_fct(prediction_scores.view(-1, self.config.vocab_size), masked_lm_labels.view(-1))
-            print("loss computed")
+            # print("loss computed")
             if self.verbose:
                 print('mask_loss', masked_lm_loss)
             # writer.add_scalar('masked_lm_loss', masked_lm_loss.item(), self.bert.iteration)
             if next_sentence_label is not None:
                 next_sentence_loss = loss_fct(seq_relationship_score.view(-1, 2), next_sentence_label.view(-1))
-                print('sentence loss computed')
+                # print('sentence loss computed')
                 if self.verbose:
                     print('mask_loss', next_sentence_loss)
                 # writer.add_scalar('next_sentence_loss', next_sentence_loss.item(), self.bert.iteration)
