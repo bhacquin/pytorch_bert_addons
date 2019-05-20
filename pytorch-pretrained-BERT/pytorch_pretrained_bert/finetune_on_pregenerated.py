@@ -15,8 +15,7 @@ from tqdm import tqdm
 from pytorch_pretrained_bert.modeling import BertForPreTraining
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
-import os
-os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+
 InputFeatures = namedtuple("InputFeatures", "input_ids input_mask segment_ids lm_label_ids is_next masked_lm_positions")
 
 log_format = '%(asctime)-10s: %(message)s'
@@ -304,6 +303,7 @@ def main():
                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
         model = DDP(model)
     elif n_gpu > 1:
+        print('number gpu used',min(args.train_batch_size, n_gpu))
         model = torch.nn.DataParallel(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
 
     # Prepare optimizer
