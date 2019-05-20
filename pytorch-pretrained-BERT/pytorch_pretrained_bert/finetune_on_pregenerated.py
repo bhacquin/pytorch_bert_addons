@@ -21,6 +21,8 @@ InputFeatures = namedtuple("InputFeatures", "input_ids input_mask segment_ids lm
 log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
+import os
+print(os.CUDA_VISIBLE_DEVICES)
 
 def convert_example_to_features(example, tokenizer, max_seq_length):
     tokens = example["tokens"]
@@ -294,18 +296,18 @@ def main():
 
     if args.fp16:
         model.half()
-    model.to(device)
+
     if args.local_rank != -1:
         try:
             from apex.parallel import DistributedDataParallel as DDP
         except ImportError:
             raise ImportError(
                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
-        model = DDP(model)
+        model = DDP(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
     elif n_gpu >= 1:
         print('number gpu used',min(args.train_batch_size, n_gpu))
-        model = torch.nn.DataParallel(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
-
+        model = torch.nn.DataParallel(model, device_ids = [0])
+    model.to(device)
     # Prepare optimizer
     param_optimizer = list(model.named_parameters())
     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
