@@ -307,14 +307,19 @@ def main():
         n_gpu_used = min(args.train_batch_size, n_gpu)
 
     elif n_gpu > 1:
+
         print('number gpu used',min(args.train_batch_size, n_gpu))
-        model = torch.nn.DataParallel(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
+
+        # torch.cuda.set_device(list(range(min(args.train_batch_size, n_gpu))))
+
+        model = torch.nn.DataParallel(model)#, device_ids = list(range(min(args.train_batch_size, n_gpu))))
         n_gpu_used = min(args.train_batch_size, n_gpu)
 
     elif n_gpu ==1:
         print("Only 1 GPU used")
         n_gpu_used = 1
     model.to(device)
+
     # Prepare optimizer
     param_optimizer = list(model.named_parameters())
     no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
@@ -360,7 +365,7 @@ def main():
             train_sampler = RandomSampler(epoch_dataset)
         else:
             train_sampler = DistributedSampler(epoch_dataset)
-        train_dataloader = DataLoader(epoch_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
+        train_dataloader = DataLoader(epoch_dataset, sampler=train_sampler,num_workers=0, batch_size=args.train_batch_size)
         tr_loss = 0
         nb_tr_examples, nb_tr_steps = 0, 0
         print('Start the loop')
