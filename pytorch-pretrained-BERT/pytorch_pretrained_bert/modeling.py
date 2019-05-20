@@ -35,7 +35,7 @@ from pytorch_pretrained_bert.file_utils import cached_path
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 ## DEBUG VERSION
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]='0,1'
+# os.environ["CUDA_VISIBLE_DEVICES"]='0,1'
 
 writer = SummaryWriter('./log')
 logger = logging.getLogger(__name__)
