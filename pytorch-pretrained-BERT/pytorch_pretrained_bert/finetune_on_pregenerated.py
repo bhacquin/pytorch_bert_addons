@@ -302,7 +302,7 @@ def main():
             raise ImportError(
                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
         model = DDP(model)
-    elif n_gpu > 1:
+    elif n_gpu >= 1:
         print('number gpu used',min(args.train_batch_size, n_gpu))
         model = torch.nn.DataParallel(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
 
