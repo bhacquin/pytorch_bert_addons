@@ -371,6 +371,7 @@ def main():
                         is_next = None
                     print("GPU", n_gpu)
                     loss = model(input_ids, segment_ids, input_mask, lm_label_ids, is_next, mask_index)
+                    print('loss')
                     if args.verbose:
                         # print('input_ids : ', input_ids)
                         #
@@ -389,6 +390,7 @@ def main():
                         optimizer.backward(loss)
                     else:
                         loss.backward()
+                    print('backwards')
                     tr_loss += loss.item()
                     nb_tr_examples += input_ids.size(0)
                     nb_tr_steps += 1
