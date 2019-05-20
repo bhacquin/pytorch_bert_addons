@@ -22,7 +22,7 @@ log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
 import os
-
+os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
 
 def convert_example_to_features(example, tokenizer, max_seq_length):
@@ -248,7 +248,7 @@ def main():
         n_gpu = torch.cuda.device_count()
         cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
         print('cuda_list', cuda_list)
-        os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+        os.environ["CUDA_VISIBLE_DEVICES"]='0'
         device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
 
 
