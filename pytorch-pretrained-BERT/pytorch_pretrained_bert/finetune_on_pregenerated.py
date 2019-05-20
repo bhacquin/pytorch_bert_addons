@@ -21,8 +21,8 @@ InputFeatures = namedtuple("InputFeatures", "input_ids input_mask segment_ids lm
 log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
-import os
-os.environ["CUDA_VISIBLE_DEVICES"]='0'
+# import os
+# os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
 def convert_example_to_features(example, tokenizer, max_seq_length):
     tokens = example["tokens"]
