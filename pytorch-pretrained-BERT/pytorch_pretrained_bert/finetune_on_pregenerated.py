@@ -22,7 +22,8 @@ log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]='0,1'
+
+
 
 def convert_example_to_features(example, tokenizer, max_seq_length):
     tokens = example["tokens"]
@@ -259,6 +260,10 @@ def main():
         raise ValueError("Invalid gradient_accumulation_steps parameter: {}, should be >= 1".format(
                             args.gradient_accumulation_steps))
 
+    cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
+    print('cuda_list', cuda_list)
+    os.environ["CUDA_VISIBLE_DEVICES"] = cuda_list
+
     args.train_batch_size = args.train_batch_size // args.gradient_accumulation_steps
 
     random.seed(args.seed)
@@ -396,9 +401,9 @@ def main():
                     if args.fp16:
                         optimizer.backward(loss)
                     else:
-                        print('backwards')
+                        # print('backwards')
                         loss.backward()
-                    print('backwards done')
+                    # print('backwards done')
                     tr_loss += loss.item()
                     nb_tr_examples += input_ids.size(0)
                     nb_tr_steps += 1
