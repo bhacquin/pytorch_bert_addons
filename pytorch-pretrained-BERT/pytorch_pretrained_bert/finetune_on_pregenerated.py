@@ -245,11 +245,12 @@ def main():
         device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
         n_gpu = torch.cuda.device_count()
     else:
+        # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
+        torch.distributed.init_process_group(backend='nccl')
         torch.cuda.set_device(args.local_rank)
         device = torch.device("cuda", args.local_rank)
         n_gpu = 1
-        # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
-        torch.distributed.init_process_group(backend='nccl',rank = args.local_rank, world_size=1)
+
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
         device, n_gpu, bool(args.local_rank != -1), args.fp16))
 
