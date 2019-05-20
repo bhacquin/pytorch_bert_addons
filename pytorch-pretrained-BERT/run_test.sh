@@ -4,9 +4,6 @@
 # pip install virtualenv
 # virtualenv venv
 # source venv/bin/activate
-
-
-
 annotated_text="annotated_stuff.txt"
 text_file="transcripts_presentation.txt"
 vocab_file="./bert-base-uncased-vocab.txt"
@@ -87,4 +84,4 @@ mkdir log
 echo 'tensorboard setup'
 # tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 echo 'finetuning starting'
-python $address/finetune_on_pregenerated.py  --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $((train_batch_size+0)) --learning_rate $learning_rate --tensorboard
+python $address/finetune_on_pregenerated.py  --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
