@@ -402,7 +402,7 @@ def main():
                         print('loss : ',loss)
 
                     # if n_gpu > 1:
-                    if n_gpu_used >1:
+                    if len(n_gpu_used) >1:
                         loss = loss.mean() # mean() to average on multi-gpu.
                     if args.gradient_accumulation_steps > 1:
                         loss = loss / args.gradient_accumulation_steps
