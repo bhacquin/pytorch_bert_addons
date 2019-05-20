@@ -306,7 +306,8 @@ def main():
         model = DDP(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
     elif n_gpu > 1:
         print('number gpu used',min(args.train_batch_size, n_gpu))
-        model = torch.nn.DataParallel(model, device_ids = [0])
+        model = torch.nn.DataParallel(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
+        n_gpu_used = list(range(min(args.train_batch_size, n_gpu)))
     elif n_gpu ==1:
         print("Only 1 GPU used")
     model.to(device)
@@ -363,15 +364,11 @@ def main():
             for step, batch in enumerate(train_dataloader):
                 if args.training:
                     model.train()
-                    print('args.train')
                     batch = tuple(t.to(device) for t in batch)
-                    print('batch to device')
                     input_ids, input_mask, segment_ids, lm_label_ids, is_next, mask_index = batch
                     if args.no_sentence_loss:
                         is_next = None
-                    print("GPU", n_gpu)
                     loss = model(input_ids, segment_ids, input_mask, lm_label_ids, is_next, mask_index)
-                    print('loss')
                     if args.verbose:
                         # print('input_ids : ', input_ids)
                         #
@@ -381,7 +378,8 @@ def main():
                         # print('is_next : ', is_next)
                         print('loss : ',loss)
 
-                    if n_gpu > 1:
+                    # if n_gpu > 1:
+                    if n_gpu_used >1:
                         loss = loss.mean() # mean() to average on multi-gpu.
                     if args.gradient_accumulation_steps > 1:
                         loss = loss / args.gradient_accumulation_steps
