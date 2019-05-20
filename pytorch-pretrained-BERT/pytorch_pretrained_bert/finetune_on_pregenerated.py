@@ -246,12 +246,9 @@ def main():
 
     if args.local_rank == -1 or args.no_cuda:
         n_gpu = torch.cuda.device_count()
-        cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
-        print('cuda_list', cuda_list)
-        os.environ["CUDA_VISIBLE_DEVICES"]='0'
-        n_gpu = torch.cuda.device_count()
-        cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
-        print('cuda_list', cuda_list)
+        # cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
+        # os.environ["CUDA_VISIBLE_DEVICES"]='0'
+
         device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
 
 
@@ -330,7 +327,7 @@ def main():
         # torch.cuda.set_device(list(range(min(args.train_batch_size, n_gpu))))
 
         model = torch.nn.DataParallel(model)#, device_ids = list(range(min(args.train_batch_size, n_gpu))))
-        n_gpu_used = len(model.device_ids)
+        n_gpu_used = model.device_ids
         print('number gpu used', n_gpu_used)
     elif n_gpu ==1:
         print("Only 1 GPU used")
@@ -385,7 +382,7 @@ def main():
         train_dataloader = DataLoader(epoch_dataset, sampler=train_sampler,num_workers=0, batch_size=args.train_batch_size)
         tr_loss = 0
         nb_tr_examples, nb_tr_steps = 0, 0
-        print('Start the loop')
+
         with tqdm(total=len(train_dataloader), desc=f"Epoch {epoch}") as pbar:
             for step, batch in enumerate(train_dataloader):
                 if args.training:
