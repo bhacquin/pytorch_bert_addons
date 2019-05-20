@@ -244,7 +244,7 @@ def main():
         num_data_epochs = args.epochs
 
     if args.local_rank == -1 or args.no_cuda:
-        device = torch.device("cuda:0" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+        device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
         n_gpu = torch.cuda.device_count()
     else:
         torch.cuda.set_device(args.local_rank)
@@ -304,9 +304,11 @@ def main():
             raise ImportError(
                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
         model = DDP(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
-    elif n_gpu >= 1:
+    elif n_gpu > 1:
         print('number gpu used',min(args.train_batch_size, n_gpu))
         model = torch.nn.DataParallel(model, device_ids = [0])
+    elif n_gpu ==1:
+        print("Only 1 GPU used")
     model.to(device)
     # Prepare optimizer
     param_optimizer = list(model.named_parameters())
@@ -356,11 +358,14 @@ def main():
         train_dataloader = DataLoader(epoch_dataset, sampler=train_sampler, batch_size=args.train_batch_size)
         tr_loss = 0
         nb_tr_examples, nb_tr_steps = 0, 0
+        print('Start the loop')
         with tqdm(total=len(train_dataloader), desc=f"Epoch {epoch}") as pbar:
             for step, batch in enumerate(train_dataloader):
                 if args.training:
                     model.train()
+                    print('args.train')
                     batch = tuple(t.to(device) for t in batch)
+                    print('batch to device')
                     input_ids, input_mask, segment_ids, lm_label_ids, is_next, mask_index = batch
                     if args.no_sentence_loss:
                         is_next = None
