@@ -22,7 +22,7 @@ log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
 import os
-print(os.environ["CUDA_VISIBLE_DEVICES"])
+os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
 def convert_example_to_features(example, tokenizer, max_seq_length):
     tokens = example["tokens"]
