@@ -5,8 +5,7 @@
 # virtualenv venv
 # source venv/bin/activate
 
-git clone https://github.com/NVIDIA/apex
-cd apex && pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" .
+
 
 annotated_text="annotated_stuff.txt"
 text_file="transcripts_presentation.txt"
