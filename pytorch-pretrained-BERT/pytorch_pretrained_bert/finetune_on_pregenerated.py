@@ -260,9 +260,10 @@ def main():
         raise ValueError("Invalid gradient_accumulation_steps parameter: {}, should be >= 1".format(
                             args.gradient_accumulation_steps))
 
+    ##### COMBIEN DE GPUs UTILLISER
     cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
     print('cuda_list', cuda_list)
-    os.environ["CUDA_VISIBLE_DEVICES"] = cuda_list
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
     args.train_batch_size = args.train_batch_size // args.gradient_accumulation_steps
 
