@@ -249,6 +249,9 @@ def main():
         cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
         print('cuda_list', cuda_list)
         os.environ["CUDA_VISIBLE_DEVICES"]='0'
+        n_gpu = torch.cuda.device_count()
+        cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
+        print('cuda_list', cuda_list)
         device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
 
 
