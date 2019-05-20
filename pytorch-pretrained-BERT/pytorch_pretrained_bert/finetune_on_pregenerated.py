@@ -249,7 +249,7 @@ def main():
         device = torch.device("cuda", args.local_rank)
         n_gpu = 1
         # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
-        # torch.distributed.init_process_group(backend='nccl',init_method='file:///mnt/nfs/sharedfile', world_size = 2)
+        torch.distributed.init_process_group(backend='nccl',init_method='file:///mnt/nfs/sharedfile', world_size = 2)
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
         device, n_gpu, bool(args.local_rank != -1), args.fp16))
 
@@ -280,7 +280,7 @@ def main():
         total_train_examples / args.train_batch_size / args.gradient_accumulation_steps)
     if args.local_rank != -1:
         # num_train_optimization_steps = num_train_optimization_steps // torch.distributed.get_world_size()
-        num_train_optimization_steps = num_train_optimization_steps // n_gpu
+        # num_train_optimization_steps = num_train_optimization_steps // n_gpu
     # Prepare model
 
     try:
