@@ -245,12 +245,21 @@ def main():
         num_data_epochs = args.epochs
 
     if args.local_rank == -1 or args.no_cuda:
-        device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
         n_gpu = torch.cuda.device_count()
+        cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
+        print('cuda_list', cuda_list)
+        os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+        device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
+
+
     else:
         torch.cuda.set_device(args.local_rank)
-        device = torch.device("cuda", args.local_rank)
         n_gpu = 1
+        cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
+        print('cuda_list', cuda_list)
+        os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+        device = torch.device("cuda", args.local_rank)
+
         # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
         torch.distributed.init_process_group(backend='nccl')
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
@@ -261,9 +270,7 @@ def main():
                             args.gradient_accumulation_steps))
 
     ##### COMBIEN DE GPUs UTILLISER
-    cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
-    print('cuda_list', cuda_list)
-    os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+
 
     args.train_batch_size = args.train_batch_size // args.gradient_accumulation_steps
 
