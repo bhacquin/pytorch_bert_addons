@@ -15,7 +15,8 @@ from tqdm import tqdm
 from pytorch_pretrained_bert.modeling import BertForPreTraining
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
-CUDA_LAUNCH_BLOCKING = 1
+import os
+os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 InputFeatures = namedtuple("InputFeatures", "input_ids input_mask segment_ids lm_label_ids is_next masked_lm_positions")
 
 log_format = '%(asctime)-10s: %(message)s'
@@ -154,6 +155,7 @@ def main():
                         type=int,
                         default=-1,
                         help="local_rank for distributed training on gpus")
+
     parser.add_argument("--no_cuda",
                         action='store_true',
                         help="Whether not to use CUDA when available")
@@ -181,11 +183,13 @@ def main():
                         help="Loss scaling to improve fp16 numeric stability. Only used when fp16 set to True.\n"
                         "0 (default value): dynamic loss scaling.\n"
                         "Positive power of 2: static loss scaling value.\n")
+
     parser.add_argument("--warmup_proportion",
                         default=0.1,
                         type=float,
                         help="Proportion of training to perform linear learning rate warmup for. "
                              "E.g., 0.1 = 10%% of training.")
+
     parser.add_argument("--learning_rate",
                         default=3e-5,
                         type=float,
@@ -300,7 +304,7 @@ def main():
                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
         model = DDP(model)
     elif n_gpu > 1:
-        model = torch.nn.DataParallel(model)
+        model = torch.nn.DataParallel(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
 
     # Prepare optimizer
     param_optimizer = list(model.named_parameters())
