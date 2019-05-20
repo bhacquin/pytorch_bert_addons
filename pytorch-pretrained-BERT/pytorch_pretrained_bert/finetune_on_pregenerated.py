@@ -396,8 +396,9 @@ def main():
                     if args.fp16:
                         optimizer.backward(loss)
                     else:
+                        print('backwards')
                         loss.backward()
-                    print('backwards')
+                    print('backwards done')
                     tr_loss += loss.item()
                     nb_tr_examples += input_ids.size(0)
                     nb_tr_steps += 1

@@ -805,21 +805,24 @@ class BertForPreTraining(BertPreTrainedModel):
         prediction_scores, seq_relationship_score = self.cls(sequence_output, pooled_output)
 
 
-        if mask_index is not None:
-            # mask_index = mask_index[mask_index != -1].view(self.train_batch_size,-1)
-            A = prediction_scores.view(self.train_batch_size,-1, self.config.vocab_size)
-            l = [torch.tensor(a)[torch.tensor(a)!=-1] for a in mask_index.tolist()]
+        # if mask_index is not None:
+        #     # mask_index = mask_index[mask_index != -1].view(self.train_batch_size,-1)
+        #     A = prediction_scores.view(self.train_batch_size,-1, self.config.vocab_size)
+        #     l = [torch.tensor(a)[torch.tensor(a)!=-1] for a in mask_index.tolist()]
+        #
+        #     for i, x in enumerate(l):
+        #         x = x.to(self.device)
+        #         _preds = torch.index_select(A[i],0,x)
+        #         _masks = torch.index_select(masked_lm_labels[i],0,x)
+        #         if self.verbose:
+        #             print('\n')
+        #             print('preds_max:', torch.max(_preds,1)[0].view(-1).tolist())
+        #             print('Pred_target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
+        #             print('target:', self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist()))
+        #             print('maxpred:',  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()))
+        #
 
-            for i, x in enumerate(l):
-                x = x.to(self.device)
-                _preds = torch.index_select(A[i],0,x)
-                _masks = torch.index_select(masked_lm_labels[i],0,x)
-                if self.verbose:
-                    print('\n')
-                    print('preds_max:', torch.max(_preds,1)[0].view(-1).tolist())
-                    print('Pred_target:', torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).tolist())
-                    print('target:', self.tokeniser.convert_ids_to_tokens(_masks.view(-1).tolist()))
-                    print('maxpred:',  self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).tolist()))
+
                 # preds_max = torch.max(_preds,1)[0].view(-1).data.tolist()
                 # maxpred = self.tokeniser.convert_ids_to_tokens(_preds.argmax(1).view(-1).data.tolist())
                 # Pred_target = torch.gather(_preds,1,_masks.unsqueeze(1)).view(-1).cpu().tolist()
@@ -829,13 +832,16 @@ class BertForPreTraining(BertPreTrainedModel):
                 # self.df = pd.concat([self.df, df_temporaire])
 
         if masked_lm_labels is not None:
+            print('Loos about to be computed')
             loss_fct = CrossEntropyLoss(ignore_index=-1)
             masked_lm_loss = loss_fct(prediction_scores.view(-1, self.config.vocab_size), masked_lm_labels.view(-1))
+            print("loss computed")
             if self.verbose:
                 print('mask_loss', masked_lm_loss)
             # writer.add_scalar('masked_lm_loss', masked_lm_loss.item(), self.bert.iteration)
             if next_sentence_label is not None:
                 next_sentence_loss = loss_fct(seq_relationship_score.view(-1, 2), next_sentence_label.view(-1))
+                print('sentence loss computed')
                 if self.verbose:
                     print('mask_loss', next_sentence_loss)
                 # writer.add_scalar('next_sentence_loss', next_sentence_loss.item(), self.bert.iteration)
