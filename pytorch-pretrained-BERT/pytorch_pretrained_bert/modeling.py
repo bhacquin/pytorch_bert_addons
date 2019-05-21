@@ -498,9 +498,8 @@ class BertPreTrainedModel(nn.Module):
     """ An abstract class to handle weights initialization and
         a simple interface for dowloading and loading pretrained models.
     """
-    def __init__(self, config, gpu = 1, *inputs, **kwargs):
-        self.gpu = gpu
-        os.environ["CUDA_VISIBLE_DEVICES"]=','.join([str(x) for x in list(range(gpu))])
+    def __init__(self, config, *inputs, **kwargs):
+
         super(BertPreTrainedModel, self).__init__()
         if not isinstance(config, BertConfig):
             raise ValueError(
@@ -692,8 +691,8 @@ class BertModel(BertPreTrainedModel):
     all_encoder_layers, pooled_output = model(input_ids, token_type_ids, input_mask)
     ```
     """
-    def __init__(self, config, gpu = 1):
-        super(BertModel, self).__init__(config, gpu = gpu)
+    def __init__(self, config):
+        super(BertModel, self).__init__(config)
         self.embeddings = BertEmbeddings(config)
         self.encoder = BertEncoder(config)
         self.pooler = BertPooler(config)
@@ -786,15 +785,10 @@ class BertForPreTraining(BertPreTrainedModel):
     masked_lm_logits_scores, seq_relationship_logits = model(input_ids, token_type_ids, input_mask)
     ```
     """
-    def __init__(self, config,tokeniser = None, verbose = False, train_batch_size =1, device = None, gpu = 1):
-        super(BertForPreTraining, self).__init__(config, gpu =gpu)
-        self.gpu = gpu
-        self.device = device
-        if self.device != 'cpu':
-            liste_gpu = ','.join([str(x) for x in list(range(self.gpu))])
-            print('liste_gpu', liste_gpu)
-            os.environ["CUDA_VISIBLE_DEVICES"] = liste_gpu
+    def __init__(self, config,tokeniser = None, verbose = False, train_batch_size =1, device = None,):
+        super(BertForPreTraining, self).__init__(config)
 
+        self.device = device
         self.bert = BertModel(config)
         self.cls = BertPreTrainingHeads(config, self.bert.embeddings.word_embeddings.weight)
         self.apply(self.init_bert_weights)
