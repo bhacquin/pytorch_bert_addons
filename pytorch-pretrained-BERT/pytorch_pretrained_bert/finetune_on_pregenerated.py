@@ -225,7 +225,7 @@ def main():
     # if args.tensorboard :
     #     from modeling import BertForPreTraining
 
-    liste_gpu = ','.join(list(range(args.number_of_gpu)))
+    liste_gpu = ','.join([str(x) for x in list(range(args.number_of_gpu))])
     print(liste_gpu)
     os.environ["CUDA_VISIBLE_DEVICES"] = liste_gpu
     assert args.pregenerated_data.is_dir(), \
