@@ -89,4 +89,5 @@ mkdir log
 echo 'tensorboard setup'
 # tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 echo 'finetuning starting'
-python $address/finetune_on_pregenerated.py --number_of_gpu $gpus --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
+export CUDA_VISIBLE_DEVICES="0"
+python $address/finetune_on_pregenerated.py  --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
