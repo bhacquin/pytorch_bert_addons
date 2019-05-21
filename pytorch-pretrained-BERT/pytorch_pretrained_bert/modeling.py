@@ -800,7 +800,7 @@ class BertForPreTraining(BertPreTrainedModel):
         self.gpu = gpu
         if self.device != 'cpu':
             liste_gpu = ','.join([str(x) for x in list(range(self.gpu))])
-            print(liste_gpu)
+            print('liste_gpu',liste_gpu)
             os.environ["CUDA_VISIBLE_DEVICES"] = liste_gpu
         self.train_batch_size = train_batch_size
         self.df = pd.DataFrame(columns=['preds_max','maxpred','Pred_target','target'])
