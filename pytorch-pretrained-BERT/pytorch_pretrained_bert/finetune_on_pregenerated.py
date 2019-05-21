@@ -246,8 +246,6 @@ def main():
 
     if args.local_rank == -1 or args.no_cuda:
         n_gpu = torch.cuda.device_count()
-        # cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
-        # os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
         device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
 
@@ -255,9 +253,6 @@ def main():
     else:
         torch.cuda.set_device(args.local_rank)
         n_gpu = 1
-        cuda_list = ','.join([str(x) for x in list(range(min(args.train_batch_size, n_gpu)))])
-        print('cuda_list', cuda_list)
-        os.environ["CUDA_VISIBLE_DEVICES"] = '0'
         device = torch.device("cuda", args.local_rank)
 
         # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
