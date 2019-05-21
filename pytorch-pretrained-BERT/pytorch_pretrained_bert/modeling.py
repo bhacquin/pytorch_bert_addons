@@ -792,7 +792,7 @@ class BertForPreTraining(BertPreTrainedModel):
         self.verbose = verbose
         if tokeniser is not None:
             self.tokeniser = BertTokenizer(vocab_file=tokeniser)
-            self.device = device
+        self.device = device
 
         else :
             self.tokeniser = tokeniser
