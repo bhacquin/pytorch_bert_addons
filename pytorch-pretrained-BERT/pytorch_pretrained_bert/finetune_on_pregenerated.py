@@ -382,7 +382,7 @@ def main():
             for step, batch in enumerate(train_dataloader):
                 if args.training:
                     model.train()
-                    batch = tuple(t.to(device, non-blocking = True) for t in batch)
+                    batch = tuple(t.to(device, non_blocking = True) for t in batch)
                     input_ids, input_mask, segment_ids, lm_label_ids, is_next, mask_index = batch
                     if args.no_sentence_loss:
                         is_next = None
