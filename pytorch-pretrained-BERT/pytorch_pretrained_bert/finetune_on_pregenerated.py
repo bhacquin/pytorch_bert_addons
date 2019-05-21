@@ -1,3 +1,8 @@
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"]='0'
+
+
 from argparse import ArgumentParser
 from pathlib import Path
 import torch
@@ -12,17 +17,17 @@ from torch.utils.data import DataLoader, Dataset, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm
 
-from pytorch_pretrained_bert.modeling import BertForPreTraining
-from pytorch_pretrained_bert.tokenization import BertTokenizer
-from pytorch_pretrained_bert.optimization import BertAdam
+
 
 InputFeatures = namedtuple("InputFeatures", "input_ids input_mask segment_ids lm_label_ids is_next masked_lm_positions")
 
 log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
-import os
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+
+from pytorch_pretrained_bert.modeling import BertForPreTraining
+from pytorch_pretrained_bert.tokenization import BertTokenizer
+from pytorch_pretrained_bert.optimization import BertAdam
 
 
 def convert_example_to_features(example, tokenizer, max_seq_length):
