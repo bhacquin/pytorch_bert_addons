@@ -789,6 +789,7 @@ class BertForPreTraining(BertPreTrainedModel):
     def __init__(self, config,tokeniser = None, verbose = False, train_batch_size =1, device = None, gpu = 1):
         super(BertForPreTraining, self).__init__(config, gpu =gpu)
         self.gpu = gpu
+        self.device = device
         if self.device != 'cpu':
             liste_gpu = ','.join([str(x) for x in list(range(self.gpu))])
             print('liste_gpu', liste_gpu)
@@ -802,7 +803,7 @@ class BertForPreTraining(BertPreTrainedModel):
             self.tokeniser = BertTokenizer(vocab_file=tokeniser)
         else :
             self.tokeniser = tokeniser
-        self.device = device
+
 
 
 
