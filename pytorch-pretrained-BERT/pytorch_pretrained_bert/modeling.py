@@ -792,10 +792,11 @@ class BertForPreTraining(BertPreTrainedModel):
         self.verbose = verbose
         if tokeniser is not None:
             self.tokeniser = BertTokenizer(vocab_file=tokeniser)
-        self.device = device
-
         else :
             self.tokeniser = tokeniser
+        self.device = device
+
+
         self.gpu = gpu
         if self.device != 'cpu':
             liste_gpu = ','.join([str(x) for x in list(range(self.gpu))])
