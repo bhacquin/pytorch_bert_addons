@@ -22,7 +22,7 @@ log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
 import os
-
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 
 
 def convert_example_to_features(example, tokenizer, max_seq_length):

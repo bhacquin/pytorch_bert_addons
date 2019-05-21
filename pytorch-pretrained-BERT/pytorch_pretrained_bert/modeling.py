@@ -35,7 +35,7 @@ from pytorch_pretrained_bert.file_utils import cached_path
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 ## DEBUG VERSION
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]='0'
+# os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
 writer = SummaryWriter('./log')
 logger = logging.getLogger(__name__)
@@ -784,7 +784,7 @@ class BertForPreTraining(BertPreTrainedModel):
     masked_lm_logits_scores, seq_relationship_logits = model(input_ids, token_type_ids, input_mask)
     ```
     """
-    def __init__(self, config,tokeniser = None, verbose = False, train_batch_size =1, device = None):
+    def __init__(self, config,tokeniser = None, verbose = False, train_batch_size =1, device = None, gpu = 1):
         super(BertForPreTraining, self).__init__(config)
         self.bert = BertModel(config)
         self.cls = BertPreTrainingHeads(config, self.bert.embeddings.word_embeddings.weight)
@@ -796,6 +796,11 @@ class BertForPreTraining(BertPreTrainedModel):
 
         else :
             self.tokeniser = tokeniser
+        self.gpu = gpu
+        if self.device != 'cpu':
+            liste_gpu = ','.join([str(x) for x in list(range(self.gpu))])
+            print(liste_gpu)
+            os.environ["CUDA_VISIBLE_DEVICES"] = liste_gpu
         self.train_batch_size = train_batch_size
         self.df = pd.DataFrame(columns=['preds_max','maxpred','Pred_target','target'])
 
