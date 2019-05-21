@@ -22,7 +22,7 @@ log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]='0'
+
 
 
 def convert_example_to_features(example, tokenizer, max_seq_length):
@@ -134,6 +134,8 @@ def main():
     parser = ArgumentParser()
     parser.add_argument('--pregenerated_data', type=Path, required=True)
 
+    parser.add_argument('--number_of_gpu', type=str, default='1')
+
     parser.add_argument('--output_dir', type=Path, required=True)
 
     parser.add_argument('--output_file', type=str, default = "pytorch_model.bin")
@@ -223,7 +225,9 @@ def main():
     # if args.tensorboard :
     #     from modeling import BertForPreTraining
 
-
+    liste_gpu = ','.join(list(range(int(args.number_of_gpu))))
+    print(liste_gpu)
+    os.environ["CUDA_VISIBLE_DEVICES"] = liste_gpu
     assert args.pregenerated_data.is_dir(), \
         "--pregenerated_data should point to the folder of files made by pregenerate_training_data.py!"
 

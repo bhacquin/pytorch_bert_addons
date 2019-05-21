@@ -4,6 +4,10 @@
 # pip install virtualenv
 # virtualenv venv
 # source venv/bin/activate
+
+# sudo yum install -y gcc kernel-devel-$(uname -r)
+# sudo yum update -y
+
 annotated_text="annotated_stuff.txt"
 text_file="transcripts_presentation.txt"
 vocab_file="./bert-base-uncased-vocab.txt"
@@ -12,6 +16,7 @@ threshold="5"
 train_batch_size=4
 output_file="./vocab.txt"
 epoch=1
+gpus=1
 learning_rate="3e-5"
 address="pytorch_pretrained_bert"
 data="data"
@@ -84,4 +89,4 @@ mkdir log
 echo 'tensorboard setup'
 # tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 echo 'finetuning starting'
-python $address/finetune_on_pregenerated.py --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
+python $address/finetune_on_pregenerated.py --number_of_gpu $gpus --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
