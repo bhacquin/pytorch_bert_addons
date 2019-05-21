@@ -498,7 +498,7 @@ class BertPreTrainedModel(nn.Module):
     """ An abstract class to handle weights initialization and
         a simple interface for dowloading and loading pretrained models.
     """
-    def __init__(self, config,gpu = 1, *inputs, **kwargs):
+    def __init__(self, config, gpu = 1, *inputs, **kwargs):
         self.gpu = gpu
         os.environ["CUDA_VISIBLE_DEVICES"]=','.join([str(x) for x in list(range(gpu))])
         super(BertPreTrainedModel, self).__init__()
