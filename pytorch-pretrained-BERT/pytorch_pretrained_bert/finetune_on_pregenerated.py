@@ -1,11 +1,9 @@
-import os
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"]='0'
+
 
 
 from argparse import ArgumentParser
 from pathlib import Path
-import torch
+
 import logging
 import json
 import random
@@ -13,8 +11,7 @@ import numpy as np
 from collections import namedtuple
 from tempfile import TemporaryDirectory
 import pickle
-from torch.utils.data import DataLoader, Dataset, RandomSampler
-from torch.utils.data.distributed import DistributedSampler
+
 from tqdm import tqdm
 
 
@@ -25,9 +22,6 @@ log_format = '%(asctime)-10s: %(message)s'
 logging.basicConfig(level=logging.INFO, format=log_format)
 
 
-from pytorch_pretrained_bert.modeling import BertForPreTraining
-from pytorch_pretrained_bert.tokenization import BertTokenizer
-from pytorch_pretrained_bert.optimization import BertAdam
 
 
 def convert_example_to_features(example, tokenizer, max_seq_length):
@@ -229,6 +223,17 @@ def main():
 
     # if args.tensorboard :
     #     from modeling import BertForPreTraining
+
+    import os
+    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    os.environ["CUDA_VISIBLE_DEVICES"] = '0'
+    import torch
+    from torch.utils.data import DataLoader, Dataset, RandomSampler
+    from torch.utils.data.distributed import DistributedSampler
+    from pytorch_pretrained_bert.modeling import BertForPreTraining
+    from pytorch_pretrained_bert.tokenization import BertTokenizer
+    from pytorch_pretrained_bert.optimization import BertAdam
+
 
     liste_gpu = ','.join([str(x) for x in list(range(args.number_of_gpu))])
     print(liste_gpu)
