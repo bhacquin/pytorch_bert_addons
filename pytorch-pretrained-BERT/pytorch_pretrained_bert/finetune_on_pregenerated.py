@@ -56,77 +56,7 @@ def convert_example_to_features(example, tokenizer, max_seq_length):
     return features
 
 
-class PregeneratedDataset(Dataset):
-    def __init__(self, training_path, epoch, tokenizer, num_data_epochs, reduce_memory=False):
-        self.vocab = tokenizer.vocab
-        self.tokenizer = tokenizer
-        self.epoch = epoch
-        self.data_epoch = epoch % num_data_epochs
-        data_file = training_path / f"epoch_{self.data_epoch}.json"
-        metrics_file = training_path / f"epoch_{self.data_epoch}_metrics.json"
-        assert data_file.is_file() and metrics_file.is_file()
-        metrics = json.loads(metrics_file.read_text())
-        num_samples = metrics['num_training_examples']
-        seq_len = metrics['max_seq_len']
-        self.temp_dir = None
-        self.working_dir = None
-        if reduce_memory:
-            self.temp_dir = TemporaryDirectory()
-            self.working_dir = Path(self.temp_dir.name)
-            input_ids = np.memmap(filename=self.working_dir/'input_ids.memmap',
-                                  mode='w+', dtype=np.int32, shape=(num_samples, seq_len))
-            input_masks = np.memmap(filename=self.working_dir/'input_masks.memmap',
-                                    shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
-            segment_ids = np.memmap(filename=self.working_dir/'input_masks.memmap',
-                                    shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
-            lm_label_ids = np.memmap(filename=self.working_dir/'lm_label_ids.memmap',
-                                     shape=(num_samples, seq_len), mode='w+', dtype=np.int32)
-            mask_positions = np.full(shape=(num_samples, seq_len), dtype=np.int32, fill_value=-1)
-            lm_label_ids[:] = -1
-            is_nexts = np.memmap(filename=self.working_dir/'is_nexts.memmap',
-                                 shape=(num_samples,), mode='w+', dtype=np.bool)
-        else:
-            input_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.int32)
-            input_masks = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
-            segment_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
-            lm_label_ids = np.full(shape=(num_samples, seq_len), dtype=np.int32, fill_value=-1)
-            is_nexts = np.zeros(shape=(num_samples,), dtype=np.bool)
-            mask_positions = np.full(shape=(num_samples, seq_len), dtype=np.int32, fill_value=-1)
-        logging.info(f"Loading training examples for epoch {epoch}")
 
-        with data_file.open() as f:
-            for i, line in enumerate(tqdm(f, total=num_samples, desc="Training examples")):
-                line = line.strip()
-                example = json.loads(line)
-                features = convert_example_to_features(example, tokenizer, seq_len)
-                input_ids[i] = features.input_ids
-                segment_ids[i] = features.segment_ids
-                input_masks[i] = features.input_mask
-                lm_label_ids[i] = features.lm_label_ids
-                is_nexts[i] = features.is_next
-                for j in range(len(features.masked_lm_positions)):
-                    mask_positions[i][j] = features.masked_lm_positions[j]
-            # assert i == num_samples - 1  # Assert that the sample count metric was true
-        logging.info("Loading complete!")
-        self.num_samples = num_samples
-        self.seq_len = seq_len
-        self.input_ids = input_ids
-        self.input_masks = input_masks
-        self.segment_ids = segment_ids
-        self.lm_label_ids = lm_label_ids
-        self.is_nexts = is_nexts
-        self.mask_positions = mask_positions
-
-    def __len__(self):
-        return self.num_samples
-
-    def __getitem__(self, item):
-        return (torch.tensor(self.input_ids[item].astype(np.int64)),
-                torch.tensor(self.input_masks[item].astype(np.int64)),
-                torch.tensor(self.segment_ids[item].astype(np.int64)),
-                torch.tensor(self.lm_label_ids[item].astype(np.int64)),
-                torch.tensor(self.is_nexts[item].astype(np.int64)),
-                torch.tensor(self.mask_positions[item].astype(np.int64)))
 
 
 def main():
@@ -233,6 +163,80 @@ def main():
     from pytorch_pretrained_bert.modeling import BertForPreTraining
     from pytorch_pretrained_bert.tokenization import BertTokenizer
     from pytorch_pretrained_bert.optimization import BertAdam
+
+    class PregeneratedDataset(Dataset):
+        def __init__(self, training_path, epoch, tokenizer, num_data_epochs, reduce_memory=False):
+            self.vocab = tokenizer.vocab
+            self.tokenizer = tokenizer
+            self.epoch = epoch
+            self.data_epoch = epoch % num_data_epochs
+            data_file = training_path / f"epoch_{self.data_epoch}.json"
+            metrics_file = training_path / f"epoch_{self.data_epoch}_metrics.json"
+            assert data_file.is_file() and metrics_file.is_file()
+            metrics = json.loads(metrics_file.read_text())
+            num_samples = metrics['num_training_examples']
+            seq_len = metrics['max_seq_len']
+            self.temp_dir = None
+            self.working_dir = None
+            if reduce_memory:
+                self.temp_dir = TemporaryDirectory()
+                self.working_dir = Path(self.temp_dir.name)
+                input_ids = np.memmap(filename=self.working_dir / 'input_ids.memmap',
+                                      mode='w+', dtype=np.int32, shape=(num_samples, seq_len))
+                input_masks = np.memmap(filename=self.working_dir / 'input_masks.memmap',
+                                        shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
+                segment_ids = np.memmap(filename=self.working_dir / 'input_masks.memmap',
+                                        shape=(num_samples, seq_len), mode='w+', dtype=np.bool)
+                lm_label_ids = np.memmap(filename=self.working_dir / 'lm_label_ids.memmap',
+                                         shape=(num_samples, seq_len), mode='w+', dtype=np.int32)
+                mask_positions = np.full(shape=(num_samples, seq_len), dtype=np.int32, fill_value=-1)
+                lm_label_ids[:] = -1
+                is_nexts = np.memmap(filename=self.working_dir / 'is_nexts.memmap',
+                                     shape=(num_samples,), mode='w+', dtype=np.bool)
+            else:
+                input_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.int32)
+                input_masks = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
+                segment_ids = np.zeros(shape=(num_samples, seq_len), dtype=np.bool)
+                lm_label_ids = np.full(shape=(num_samples, seq_len), dtype=np.int32, fill_value=-1)
+                is_nexts = np.zeros(shape=(num_samples,), dtype=np.bool)
+                mask_positions = np.full(shape=(num_samples, seq_len), dtype=np.int32, fill_value=-1)
+            logging.info(f"Loading training examples for epoch {epoch}")
+
+            with data_file.open() as f:
+                for i, line in enumerate(tqdm(f, total=num_samples, desc="Training examples")):
+                    line = line.strip()
+                    example = json.loads(line)
+                    features = convert_example_to_features(example, tokenizer, seq_len)
+                    input_ids[i] = features.input_ids
+                    segment_ids[i] = features.segment_ids
+                    input_masks[i] = features.input_mask
+                    lm_label_ids[i] = features.lm_label_ids
+                    is_nexts[i] = features.is_next
+                    for j in range(len(features.masked_lm_positions)):
+                        mask_positions[i][j] = features.masked_lm_positions[j]
+                # assert i == num_samples - 1  # Assert that the sample count metric was true
+            logging.info("Loading complete!")
+            self.num_samples = num_samples
+            self.seq_len = seq_len
+            self.input_ids = input_ids
+            self.input_masks = input_masks
+            self.segment_ids = segment_ids
+            self.lm_label_ids = lm_label_ids
+            self.is_nexts = is_nexts
+            self.mask_positions = mask_positions
+
+        def __len__(self):
+            return self.num_samples
+
+        def __getitem__(self, item):
+            return (torch.tensor(self.input_ids[item].astype(np.int64)),
+                    torch.tensor(self.input_masks[item].astype(np.int64)),
+                    torch.tensor(self.segment_ids[item].astype(np.int64)),
+                    torch.tensor(self.lm_label_ids[item].astype(np.int64)),
+                    torch.tensor(self.is_nexts[item].astype(np.int64)),
+                    torch.tensor(self.mask_positions[item].astype(np.int64)))
+
+
 
 
     liste_gpu = ','.join([str(x) for x in list(range(args.number_of_gpu))])
