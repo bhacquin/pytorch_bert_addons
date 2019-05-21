@@ -498,7 +498,9 @@ class BertPreTrainedModel(nn.Module):
     """ An abstract class to handle weights initialization and
         a simple interface for dowloading and loading pretrained models.
     """
-    def __init__(self, config, *inputs, **kwargs):
+    def __init__(self, config,gpu = 1, *inputs, **kwargs):
+        self.gpu = gpu
+        os.environ["CUDA_VISIBLE_DEVICES"]=','.join([str(x) for x in list(range(gpu))])
         super(BertPreTrainedModel, self).__init__()
         if not isinstance(config, BertConfig):
             raise ValueError(
@@ -690,8 +692,8 @@ class BertModel(BertPreTrainedModel):
     all_encoder_layers, pooled_output = model(input_ids, token_type_ids, input_mask)
     ```
     """
-    def __init__(self, config):
-        super(BertModel, self).__init__(config)
+    def __init__(self, config, gpu = 1):
+        super(BertModel, self).__init__(config, gpu = gpu)
         self.embeddings = BertEmbeddings(config)
         self.encoder = BertEncoder(config)
         self.pooler = BertPooler(config)
@@ -785,7 +787,13 @@ class BertForPreTraining(BertPreTrainedModel):
     ```
     """
     def __init__(self, config,tokeniser = None, verbose = False, train_batch_size =1, device = None, gpu = 1):
-        super(BertForPreTraining, self).__init__(config)
+        super(BertForPreTraining, self).__init__(config, gpu =gpu)
+        self.gpu = gpu
+        if self.device != 'cpu':
+            liste_gpu = ','.join([str(x) for x in list(range(self.gpu))])
+            print('liste_gpu', liste_gpu)
+            os.environ["CUDA_VISIBLE_DEVICES"] = liste_gpu
+
         self.bert = BertModel(config)
         self.cls = BertPreTrainingHeads(config, self.bert.embeddings.word_embeddings.weight)
         self.apply(self.init_bert_weights)
@@ -797,11 +805,7 @@ class BertForPreTraining(BertPreTrainedModel):
         self.device = device
 
 
-        self.gpu = gpu
-        if self.device != 'cpu':
-            liste_gpu = ','.join([str(x) for x in list(range(self.gpu))])
-            print('liste_gpu',liste_gpu)
-            os.environ["CUDA_VISIBLE_DEVICES"] = liste_gpu
+
         self.train_batch_size = train_batch_size
         self.df = pd.DataFrame(columns=['preds_max','maxpred','Pred_target','target'])
 
