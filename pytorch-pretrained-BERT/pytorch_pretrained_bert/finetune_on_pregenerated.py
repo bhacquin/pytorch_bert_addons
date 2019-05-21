@@ -134,7 +134,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument('--pregenerated_data', type=Path, required=True)
 
-    parser.add_argument('--number_of_gpu', type=str, default='1')
+    parser.add_argument('--number_of_gpu', type=int, default=1)
 
     parser.add_argument('--output_dir', type=Path, required=True)
 
@@ -225,7 +225,7 @@ def main():
     # if args.tensorboard :
     #     from modeling import BertForPreTraining
 
-    liste_gpu = ','.join(list(range(int(args.number_of_gpu))))
+    liste_gpu = ','.join(list(range(args.number_of_gpu)))
     print(liste_gpu)
     os.environ["CUDA_VISIBLE_DEVICES"] = liste_gpu
     assert args.pregenerated_data.is_dir(), \
