@@ -326,7 +326,7 @@ def main():
         print('number gpu used', n_gpu_used)
     elif n_gpu ==1:
         print("Only 1 GPU used")
-        n_gpu_used = model.device_ids
+        n_gpu_used = [1]
     model.to(device)
 
     # Prepare optimizer
