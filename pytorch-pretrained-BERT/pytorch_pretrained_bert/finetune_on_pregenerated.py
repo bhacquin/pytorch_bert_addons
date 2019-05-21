@@ -298,7 +298,7 @@ def main():
     # Prepare model
 
     try:
-        model = BertForPreTraining.from_pretrained(args.bert_model, verbose = args.verbose, tokeniser = args.tokeniser,train_batch_size = args.train_batch_size, device = device)
+        model = BertForPreTraining.from_pretrained(args.bert_model, verbose = args.verbose, tokeniser = args.tokeniser,train_batch_size = args.train_batch_size, device = device, gpus = args.number_of_gpu)
     except:
         model = BertForPreTraining.from_pretrained(args.bert_model)
 
