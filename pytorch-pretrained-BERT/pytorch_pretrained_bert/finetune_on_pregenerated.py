@@ -374,7 +374,7 @@ def main():
             train_sampler = RandomSampler(epoch_dataset)
         else:
             train_sampler = DistributedSampler(epoch_dataset)
-        train_dataloader = DataLoader(epoch_dataset, sampler=train_sampler,num_workers=0, batch_size=args.train_batch_size)
+        train_dataloader = DataLoader(epoch_dataset, sampler=train_sampler,num_workers=0, batch_size=args.train_batch_size, pin_memory=True)
         tr_loss = 0
         nb_tr_examples, nb_tr_steps = 0, 0
 
@@ -382,7 +382,7 @@ def main():
             for step, batch in enumerate(train_dataloader):
                 if args.training:
                     model.train()
-                    batch = tuple(t.to(device) for t in batch)
+                    batch = tuple(t.to(device, non-blocking = True) for t in batch)
                     input_ids, input_mask, segment_ids, lm_label_ids, is_next, mask_index = batch
                     if args.no_sentence_loss:
                         is_next = None
