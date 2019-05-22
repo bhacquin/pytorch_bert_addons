@@ -275,7 +275,7 @@ def main():
         print("Initialize Process Group...")
         # torch.distributed.init_process_group(backend='nccl')
         # Number of distributed processes
-        world_size = 2
+        world_size = 1
 
         # Distributed backend type
         dist_backend = 'nccl'
@@ -284,6 +284,7 @@ def main():
         dist_url = "tcp://172.31.38.122:23456"
         torch.distributed.init_process_group(backend=dist_backend, init_method=dist_url, rank=args.local_rank,
                                 world_size=world_size)
+    print('done')
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
         device, n_gpu, bool(args.local_rank != -1), args.fp16))
 
@@ -333,14 +334,16 @@ def main():
         model.half()
 
     if args.local_rank != -1:
-        try:
-            from apex.parallel import DistributedDataParallel as DDP
-        except ImportError:
-            raise ImportError(
-                "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
+        # try:
+        #     from apex.parallel import DistributedDataParallel as DDP
+        # except ImportError:
+        #     raise ImportError(
+        #         "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
         print(dp_device_ids)
         print("Initialize Model...")
-        model = DDP(model, device_ids = dp_device_ids,output_device=args.local_rank)
+        # model = DDP(model, device_ids = dp_device_ids,output_device=args.local_rank)
+        model.to(device)
+        model = torch.nn.parallel.DistributedDataParallel(model , device_ids = dp_device_ids, output_device = local_rank)
         n_gpu_used = model.device_ids
         print('number gpu used', n_gpu_used)
 
