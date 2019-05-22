@@ -273,7 +273,7 @@ def main():
             device = torch.device("cuda")
             n_gpu = torch.cuda.device_count()
 
-            dp_device_ids = list(range(min(n_gpu,args.train_batch_size))
+            dp_device_ids = list(range(min(n_gpu,args.train_batch_size)))
 
         else:
             torch.cuda.set_device(args.local_rank)
@@ -347,7 +347,7 @@ def main():
         # except ImportError:
         #     raise ImportError(
         #         "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
-        print(dp_device_ids)
+
         print("Initialize Model...")
         # model = DDP(model, device_ids = dp_device_ids,output_device=args.local_rank)
         model.to(device)
