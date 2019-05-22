@@ -14,3 +14,4 @@ export NCCL_SOCKET_IFNAME='ens3'
 export MASTER_ADDR=
 export MASTER_PORT=
 export WORLD_SIZE=
+export RANK=

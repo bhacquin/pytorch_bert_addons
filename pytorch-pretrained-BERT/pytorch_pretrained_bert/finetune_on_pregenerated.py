@@ -269,9 +269,9 @@ def main():
         torch.cuda.set_device(args.local_rank)
         n_gpu = 1
         device = torch.device("cuda", args.local_rank)
-
+        dp_device_ids = [args.local_rank]
         # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
-        torch.distributed.init_process_group(backend='nccl',rank=args.local_rank)
+        torch.distributed.init_process_group(backend='nccl')
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
         device, n_gpu, bool(args.local_rank != -1), args.fp16))
 
@@ -326,7 +326,7 @@ def main():
         except ImportError:
             raise ImportError(
                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
-        model = DDP(model, device_ids = list(range(min(args.train_batch_size, n_gpu))))
+        model = DDP(model, device_ids = dp_device_ids,output_device=args.local_rank)
         n_gpu_used = model.device_ids
         print('number gpu used', n_gpu_used)
 
@@ -389,7 +389,7 @@ def main():
             train_sampler = RandomSampler(epoch_dataset)
         else:
             train_sampler = DistributedSampler(epoch_dataset)
-        train_dataloader = DataLoader(epoch_dataset, sampler=train_sampler,num_workers=0, batch_size=args.train_batch_size, pin_memory=True)
+        train_dataloader = DataLoader(epoch_dataset, sampler=train_sampler,num_workers=0, batch_size=args.train_batch_size, pin_memory=False)
         tr_loss = 0
         nb_tr_examples, nb_tr_steps = 0, 0
 
