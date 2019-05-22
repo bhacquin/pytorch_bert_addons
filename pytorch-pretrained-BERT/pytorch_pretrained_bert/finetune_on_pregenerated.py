@@ -1,5 +1,6 @@
 import os
 import torch
+torch.multiprocessing.set_start_method('spawn')
 from torch.utils.data import DataLoader, Dataset, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from pytorch_pretrained_bert.modeling import BertForPreTraining
@@ -138,7 +139,7 @@ class PregeneratedDataset(Dataset):
 
 
 def main():
-    torch.multiprocessing.set_start_method('spawn')
+
     parser = ArgumentParser()
     parser.add_argument('--pregenerated_data', type=Path, required=True)
 
