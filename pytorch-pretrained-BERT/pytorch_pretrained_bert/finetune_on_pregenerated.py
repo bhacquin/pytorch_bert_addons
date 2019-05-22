@@ -1,12 +1,12 @@
 import os
 import torch
-torch.multiprocessing.set_start_method('spawn')
+
 from torch.utils.data import DataLoader, Dataset, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from pytorch_pretrained_bert.modeling import BertForPreTraining
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam
-
+import torch.multiprocessing as multiprocessing
 
 from argparse import ArgumentParser
 from pathlib import Path
@@ -483,4 +483,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # delete torch.multiprocessing.set_start_method('forkserver')
+    multiprocessing = multiprocessing.get_context('spawn')
+    torch.multiprocessing.set_start_method('spawn', force=True)
     main()
