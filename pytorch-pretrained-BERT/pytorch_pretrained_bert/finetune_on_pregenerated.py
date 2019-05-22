@@ -1,6 +1,6 @@
 import os
 import torch
-
+import time
 from torch.utils.data import DataLoader, Dataset, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 from pytorch_pretrained_bert.modeling import BertForPreTraining
@@ -272,7 +272,9 @@ def main():
         if args.use_all_gpus:
             device = torch.device("cuda")
             n_gpu = torch.cuda.device_count()
-            dp_device_ids = list(range(n_gpu))
+
+            dp_device_ids = list(range(min(n_gpu,args.train_batch_size))
+
         else:
             torch.cuda.set_device(args.local_rank)
             device = torch.device("cuda", args.local_rank)
@@ -286,10 +288,11 @@ def main():
 
         # Distributed backend type
         dist_backend = 'nccl'
-
+        start= time.time()
         torch.distributed.init_process_group(backend=dist_backend, init_method=args.dist_url, rank=args.rank,
                                 world_size=world_size)
-    print('done')
+        end = time.time()
+    print('done within :', end-start)
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
         device, n_gpu, bool(args.local_rank != -1), args.fp16))
 
