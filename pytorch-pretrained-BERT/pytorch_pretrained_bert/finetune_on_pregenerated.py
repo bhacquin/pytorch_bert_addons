@@ -266,12 +266,24 @@ def main():
 
 
     else:
+
         torch.cuda.set_device(args.local_rank)
         device = torch.device("cuda", args.local_rank)
         dp_device_ids = [args.local_rank]
         n_gpu = 1
         # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
-        torch.distributed.init_process_group(backend='nccl')
+        print("Initialize Process Group...")
+        # torch.distributed.init_process_group(backend='nccl')
+        # Number of distributed processes
+        world_size = 2
+
+        # Distributed backend type
+        dist_backend = 'nccl'
+
+        # Url used to setup distributed training
+        dist_url = "tcp://172.31.38.122:23456"
+        torch.distributed.init_process_group(backend=dist_backend, init_method=dist_url, rank=args.local_rank,
+                                world_size=world_size)
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
         device, n_gpu, bool(args.local_rank != -1), args.fp16))
 
@@ -327,6 +339,7 @@ def main():
             raise ImportError(
                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
         print(dp_device_ids)
+        print("Initialize Model...")
         model = DDP(model, device_ids = dp_device_ids,output_device=args.local_rank)
         n_gpu_used = model.device_ids
         print('number gpu used', n_gpu_used)
@@ -486,4 +499,5 @@ if __name__ == '__main__':
     # delete torch.multiprocessing.set_start_method('forkserver')
     multiprocessing = multiprocessing.get_context('spawn')
     torch.multiprocessing.set_start_method('spawn', force=True)
+    print('debut')
     main()
