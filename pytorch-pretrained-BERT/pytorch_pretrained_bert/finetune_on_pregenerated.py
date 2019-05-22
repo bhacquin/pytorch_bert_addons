@@ -262,15 +262,14 @@ def main():
 
     if args.local_rank == -1 or args.no_cuda:
         n_gpu = torch.cuda.device_count()
-
         device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
 
 
     else:
         torch.cuda.set_device(args.local_rank)
-        n_gpu = 1
         device = torch.device("cuda", args.local_rank)
         dp_device_ids = [args.local_rank]
+        n_gpu = 1
         # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
         torch.distributed.init_process_group(backend='nccl')
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
@@ -327,6 +326,7 @@ def main():
         except ImportError:
             raise ImportError(
                 "Please install apex from https://www.github.com/nvidia/apex to use distributed and fp16 training.")
+        print(dp_device_ids)
         model = DDP(model, device_ids = dp_device_ids,output_device=args.local_rank)
         n_gpu_used = model.device_ids
         print('number gpu used', n_gpu_used)
