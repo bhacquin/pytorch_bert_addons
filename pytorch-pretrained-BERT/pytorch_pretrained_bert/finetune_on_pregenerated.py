@@ -343,7 +343,7 @@ def main():
         print("Initialize Model...")
         # model = DDP(model, device_ids = dp_device_ids,output_device=args.local_rank)
         model.to(device)
-        model = torch.nn.parallel.DistributedDataParallel(model , device_ids = dp_device_ids, output_device = local_rank)
+        model = torch.nn.parallel.DistributedDataParallel(model , device_ids = dp_device_ids, output_device = args.local_rank)
         n_gpu_used = model.device_ids
         print('number gpu used', n_gpu_used)
 
