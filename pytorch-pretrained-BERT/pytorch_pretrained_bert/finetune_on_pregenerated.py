@@ -272,6 +272,7 @@ def main():
         if args.use_all_gpus:
             device = torch.device("cuda")
             n_gpu = torch.cuda.device_count()
+            dp_device_ids = list(range(n_gpu))
         else:
             torch.cuda.set_device(args.local_rank)
             device = torch.device("cuda", args.local_rank)
