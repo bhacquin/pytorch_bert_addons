@@ -143,8 +143,11 @@ def main():
     parser = ArgumentParser()
     parser.add_argument('--pregenerated_data', type=Path, required=True)
 
-
+    parser.add_argument('--dist_url', type=str, default="tcp://172.31.38.122:23456")
+    parser.add_argument('--rank', type=int, default=0)
     parser.add_argument('--output_dir', type=Path, required=True)
+    parser.add_argument('--use_all_gpus', action="store_true")
+    parser.add_argument('--world_size', type=int, default=1)
 
     parser.add_argument('--output_file', type=str, default = "pytorch_model.bin")
 
@@ -266,23 +269,24 @@ def main():
 
 
     else:
-
-        torch.cuda.set_device(args.local_rank)
-        device = torch.device("cuda", args.local_rank)
-        dp_device_ids = [args.local_rank]
-        n_gpu = 1
+        if args.use_all_gpus:
+            device = torch.device("cuda")
+            n_gpu = torch.cuda.device_count()
+        else
+            torch.cuda.set_device(args.local_rank)
+            device = torch.device("cuda", args.local_rank)
+            dp_device_ids = [args.local_rank]
+            n_gpu = 1
         # Initializes the distributed backend which will take care of sychronizing nodes/GPUs
         print("Initialize Process Group...")
         # torch.distributed.init_process_group(backend='nccl')
         # Number of distributed processes
-        world_size = 1
+        world_size = args.world_size
 
         # Distributed backend type
         dist_backend = 'nccl'
 
-        # Url used to setup distributed training
-        dist_url = "tcp://172.31.38.122:23456"
-        torch.distributed.init_process_group(backend=dist_backend, init_method=dist_url, rank=args.local_rank,
+        torch.distributed.init_process_group(backend=dist_backend, init_method=args.dist_url, rank=args.rank,
                                 world_size=world_size)
     print('done')
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(

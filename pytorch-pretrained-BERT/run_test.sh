@@ -7,7 +7,8 @@
 
 # sudo yum install -y gcc kernel-devel-$(uname -r)
 # sudo yum update -y
-
+local_rank=0
+dist_url="tcp://172.31.38.122:23456"
 annotated_text="annotated_stuff.txt"
 text_file="transcripts_presentation.txt"
 vocab_file="./bert-base-uncased-vocab.txt"
@@ -90,4 +91,4 @@ echo 'tensorboard setup'
 # tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 echo 'finetuning starting'
 export CUDA_VISIBLE_DEVICES="0,1,2,3,4,5,6,7,8"
-python $address/finetune_on_pregenerated.py  --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
+python $address/finetune_on_pregenerated.py --local_rank $local_rank  --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
