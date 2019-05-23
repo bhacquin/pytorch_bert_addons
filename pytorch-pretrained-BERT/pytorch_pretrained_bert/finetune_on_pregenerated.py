@@ -287,7 +287,7 @@ def main():
         world_size = args.world_size
 
         # Distributed backend type
-        dist_backend = 'nccl'
+        dist_backend = 'gloo'
         start= time.time()
         torch.distributed.init_process_group(backend=dist_backend, init_method=args.dist_url, rank=args.rank,
                                 world_size=world_size)
