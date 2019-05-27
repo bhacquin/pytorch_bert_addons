@@ -843,15 +843,15 @@ class BertForPreTraining(BertPreTrainedModel):
             # print("loss computed")
             if self.verbose:
                 print('mask_loss', masked_lm_loss)
-            # writer.add_scalar('masked_lm_loss', masked_lm_loss.item(), self.bert.iteration)
+            writer.add_scalar('masked_lm_loss', masked_lm_loss.item(), self.bert.iteration)
             if next_sentence_label is not None:
                 next_sentence_loss = loss_fct(seq_relationship_score.view(-1, 2), next_sentence_label.view(-1))
                 # print('sentence loss computed')
                 if self.verbose:
                     print('mask_loss', next_sentence_loss)
-                # writer.add_scalar('next_sentence_loss', next_sentence_loss.item(), self.bert.iteration)
+                writer.add_scalar('next_sentence_loss', next_sentence_loss.item(), self.bert.iteration)
                 total_loss = masked_lm_loss + next_sentence_loss
-                # writer.add_scalar('total_loss', total_loss.item(), self.bert.iteration)
+                writer.add_scalar('total_loss', total_loss.item(), self.bert.iteration)
                 return total_loss
             else:
                 return masked_lm_loss
