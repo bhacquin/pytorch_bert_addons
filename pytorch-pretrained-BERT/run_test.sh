@@ -71,12 +71,12 @@ mkdir -p training
 mkdir -p test
 python $address/vocab_treatment.py --vocab_file $data/$vocab_file --word_file $data/$word_file --threshold $threshold --output_file $output_file --annotated_text_file $data/$annotated_text --text_file $data/$text_file
 echo "Prepare text data"
-python $address/prepare_all_texts_for_bert.py --input_folder training/ --ouput_file training_text.txt
+#python $address/prepare_all_texts_for_bert.py --input_folder training/ --ouput_file training_text.txt
 python $address/prepare_all_texts_for_bert.py --input_folder test/ --ouput_file test_text.txt
 rm -r training/
 rm -r test/
 echo 'generating data for train'
-python $address/pregenerate_training_data.py --train_corpus "training_text.txt" --bert_model vocab.txt --do_lower_case --output_dir training/ --epochs_to_generate 2 --max_seq_len 512
+#python $address/pregenerate_training_data.py --train_corpus "training_text.txt" --bert_model vocab.txt --do_lower_case --output_dir training/ --epochs_to_generate 2 --max_seq_len 512
 python $address/pregenerate_training_data.py --train_corpus "test_text.txt" --bert_model vocab.txt --do_lower_case --output_dir test/ --epochs_to_generate $epoch --max_seq_len 512 ;;
 (--) shift; break;;
 (-*) echo "$0: error - unrecognized option $1" 1>&2 exit1;;
@@ -93,4 +93,4 @@ echo 'tensorboard setup'
 # tensorboard --logdir=/log --host 0.0.0.0 --port 6006 &
 echo 'finetuning starting'
 export CUDA_VISIBLE_DEVICES="0,1,2,3,4,5,6,7,8"
-python $address/finetune_on_pregenerated.py --use_all_gpus --world_size $world_size --local_rank $local_rank --rank $rank --dist_url $dist_url --pregenerated_data training/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
+python $address/finetune_on_pregenerated.py --use_all_gpus --world_size $world_size --local_rank $local_rank --rank $rank --dist_url $dist_url --pregenerated_data test/ --bert_model bert-base-uncased --do_lower_case --output_dir finetuned_lm/ --epochs $epoch --train_batch_size $train_batch_size --learning_rate $learning_rate --tensorboard
