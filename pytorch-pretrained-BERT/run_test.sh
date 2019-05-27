@@ -9,7 +9,7 @@
 # sudo yum update -y
 rank=0
 world_size=2
-local_rank=0
+local_rank=-1
 dist_url="tcp://172.31.40.232:23456"
 annotated_text="annotated_stuff.txt"
 text_file="transcripts_presentation.txt"
