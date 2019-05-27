@@ -37,7 +37,7 @@ from pytorch_pretrained_bert.tokenization import BertTokenizer
 import os
 # os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
-writer = SummaryWriter('./log')
+writer = SummaryWriter('~/pytorch_bert_addons/pytorch-pretrained-BERT/log')
 logger = logging.getLogger(__name__)
 
 PRETRAINED_MODEL_ARCHIVE_MAP = {
