@@ -293,7 +293,7 @@ def main():
         torch.distributed.init_process_group(backend=dist_backend, init_method=args.dist_url, rank=args.rank,
                                 world_size=world_size)
         end = time.time()
-    print('done within :', end-start)
+        print('done within :', end-start)
     logging.info("device: {} n_gpu: {}, distributed training: {}, 16-bits training: {}".format(
         device, n_gpu, bool(args.local_rank != -1), args.fp16))
 
