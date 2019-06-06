@@ -37,16 +37,16 @@ from io import open
 from setuptools import find_packages, setup
 
 setup(
-    name="bastien",
-    version="0.7.2",
-    author="Thomas Wolf, Victor Sanh, Tim Rault, Google AI Language Team Authors, Open AI team Authors",
-    author_email="thomas@huggingface.co",
-    description="PyTorch version of Google AI BERT model with script to load Google pre-trained models",
+    name="pretrained_bert",
+    version="0.0.1",
+    author="bastien hacquin, et al",
+    author_email="",
+    description="Reprise du code de Huggingface et modification de bert",
     long_description=open("README.md", "r", encoding='utf-8').read(),
     long_description_content_type="text/markdown",
     keywords='BERT NLP deep learning google',
     license='Apache',
-    url="https://github.com/huggingface/pytorch-pretrained-BERT",
+    url=",
     packages=find_packages(exclude=["*.tests", "*.tests.*",
                                     "tests.*", "tests"]),
     install_requires=['torch>=0.4.1',
