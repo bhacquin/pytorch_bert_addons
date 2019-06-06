@@ -37,7 +37,7 @@ from io import open
 from setuptools import find_packages, setup
 
 setup(
-    name="bastien_bert",
+    name="bastien",
     version="0.7.2",
     author="Thomas Wolf, Victor Sanh, Tim Rault, Google AI Language Team Authors, Open AI team Authors",
     author_email="thomas@huggingface.co",
