@@ -1280,7 +1280,7 @@ class BertForQuestionAnswering(BertPreTrainedModel):
             return start_logits, end_logits
 
 
-class BertForMultiLabelSequenceClassification(PreTrainedBertModel):
+class BertForMultiLabelSequenceClassification(BertPreTrainedModel):
     """BERT model for classification.
     This module is composed of the BERT model with a linear layer on top of
     the pooled output.
